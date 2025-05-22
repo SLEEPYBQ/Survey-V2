@@ -31,7 +31,7 @@ def parse_args():
                        help='强制OCR处理整个文档')
     
     # OpenAI API参数
-    parser.add_argument('--api-key', default='sk-wqEoMUckbUlrTL4tVcz6kOvn1Gw9Uj499VahouSP83cdtv4c',
+    parser.add_argument('--api-key', default='xxx',
                        help='OpenAI API密钥')
     parser.add_argument('--api-base', default='https://api.openai-proxy.org/v1',
                        help='OpenAI API Base URL')
