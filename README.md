@@ -5,7 +5,7 @@ A comprehensive tool for converting PDF research papers to Markdown format and a
 ## 🚀 Features
 
 - **PDF to Markdown Conversion**: Convert PDF research papers to clean Markdown format using marker library
-- **AI-Powered Question Answering**: Extract structured information from papers using OpenAI API
+- **AI-Powered Question Answering**: Extract structured information from papers using LLM API (**Default: Deepseek-V3**)
 - **Batch Processing**: Process multiple papers simultaneously with parallel processing
 - **Flexible Execution Modes**: Choose between conversion-only, query-only, or full pipeline
 - **GPU Acceleration**: Support for CUDA, MPS (Apple Silicon), and CPU processing
@@ -19,7 +19,7 @@ A comprehensive tool for converting PDF research papers to Markdown format and a
 
 - Python 3.11
 - Optional: CUDA-capable GPU or Apple Silicon for faster PDF processing
-- OpenAI API key for question answering functionality
+- API key for question answering functionality
 
 ## 🗂️ Project Structure
 
@@ -100,9 +100,9 @@ python main.py --dry-run
 | `--mode` | Execution mode: `markdown`, `query`, or `all` | `all` |
 | `--device` | Processing device: `auto`, `cpu`, `cuda`, `mps` | `auto` |
 | `--no-gpu` | Force CPU processing | `False` |
-| `--api-key` | OpenAI API key | Environment variable |
-| `--api-base` | OpenAI API base URL | `https://api.openai.com/v1` |
-| `--model` | OpenAI model to use | `gpt-3.5-turbo` |
+| `--api-key` | API key | `xxx` |
+| `--api-base` | API base URL | `https://api.openai-proxy.org/v1` |
+| `--model` |  Language model to use | `deepseek-chat` |
 | `--max-workers` | Maximum parallel processes for querying | `4` |
 | `--verbose`, `-v` | Enable verbose output | `False` |
 | `--dry-run` | Show files to process without executing | `False` |
@@ -184,7 +184,7 @@ Results are saved in CSV format with:
    - Check if PDF is corrupted or password-protected
 
 2. **API Errors**
-   - Verify OpenAI API key is correct
+   - Verify API key is correct
    - Check API rate limits and usage
    - Ensure network connectivity
 
@@ -203,4 +203,3 @@ Results are saved in CSV format with:
 ## 🙏 Acknowledgments
 
 - [marker-pdf](https://github.com/VikParuchuri/marker) for PDF processing
-- [OpenAI](https://openai.com/) for language model capabilities
