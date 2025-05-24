@@ -1,4 +1,4 @@
-# PDF Research Paper Analysis Tool
+# Survey-V2
 
 A comprehensive tool for converting PDF research papers to Markdown format and automatically extracting structured information using Large Language Models (LLMs).
 
@@ -32,6 +32,7 @@ your_project/
 ├── utils.py               # Utility functions
 ├── pdfs/                  # Input PDF files (default)
 ├── markdowns/             # Generated Markdown files (default)
+├── raw_responses/         # LLM Output results (default)
 └── results/               # Query results and CSV output (default)
 ```
 
@@ -39,8 +40,8 @@ your_project/
 
 1. Clone the repository:
 ```bash
-git clone <your-repo-url>
-cd pdf-research-analysis
+git clone https://github.com/SLEEPYBQ/Survey-V2.git
+cd Survey-V2
 ```
 
 2. Install dependencies:
