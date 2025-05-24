@@ -84,18 +84,18 @@ def detect_device(args):
     os.environ['TORCH_DEVICE'] = device
     return device
 
-# 问题ID列表 - 用于CSV列名
+# 问题ID列表 - 用于CSV列名（使用下划线格式，与提示词中的格式一致）
 QUESTION_IDS = [
     "involved_stakeholder", "sample_size", "country", "age", "gender",
     "demographic_background", "cognitive_and_physical_impairment", "needs_and_expectations",
-    "application_context", "process_of_the_care", "methodology", "Care_type",
+    "application_context", "process_of_the_care", "methodology", "care_type",
     "robot_type", "robot_name", "design_goal", "robot_concern_function",
     "facilitating_functions", "inhibitory_functions", "stakeholder_facilitating_characteristics",
     "stakeholder_inhibitory_characteristics", "engagement", "acceptance", "trust",
     "key_findings", "additional_info", "testing_context"
 ]
 
-# 问题显示名称和对应ID的映射
+# 问题显示名称和对应ID的映射（保持向后兼容）
 QUESTION_PATTERNS = [
     ("Involved Stakeholder", "involved_stakeholder"),
     ("Sample Size", "sample_size"),
@@ -108,7 +108,7 @@ QUESTION_PATTERNS = [
     ("Application Context", "application_context"),
     ("Process Of The Care", "process_of_the_care"),
     ("Methodology", "methodology"),
-    ("Care Type", "Care_type"),
+    ("Care Type", "care_type"),
     ("Robot Type", "robot_type"),
     ("Robot Name", "robot_name"),
     ("Design Goal", "design_goal"),
