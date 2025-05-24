@@ -13,13 +13,7 @@ A comprehensive tool for converting PDF research papers to Markdown format and a
 
 ## 📋 Requirements
 
-### Dependencies
 
-```bash
-conda create -n survey python=3.10
-conda activate survey
-pip install marker
-```
 
 ### System Requirements
 
@@ -50,14 +44,13 @@ cd pdf-research-analysis
 ```
 
 2. Install dependencies:
+
 ```bash
-pip install -r requirements.txt
+conda create -n survey python=3.11
+conda activate survey
+pip install marker
 ```
 
-3. Set up your OpenAI API key:
-```bash
-export OPENAI_API_KEY="your-api-key-here"
-```
 
 ## 📚 Usage
 
@@ -205,17 +198,6 @@ Results are saved in CSV format with:
 - Adjust `--max-workers` based on your system and API limits
 - Process smaller batches if encountering memory issues
 
-## 📄 License
-
-[Add your license information here]
-
-## 🤝 Contributing
-
-[Add contribution guidelines here]
-
-## 📧 Contact
-
-[Add contact information here]
 
 ## 🙏 Acknowledgments
 
