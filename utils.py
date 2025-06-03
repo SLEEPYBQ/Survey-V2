@@ -4,23 +4,24 @@ import json
 import glob
 from datetime import datetime
 from config import QUESTION_IDS
+import pandas as pd
 
-def save_results_to_csv(all_results, output_dir):
-    """保存结果到CSV文件"""
+def save_results_to_xlsx(all_results, output_dir):
+    """保存结果到XLSX文件"""
     
     # 创建输出目录
     os.makedirs(output_dir, exist_ok=True)
     
-    # 构建CSV的字段名（表头）- 与静态提示词中的问题顺序一致
+    # 构建表头
     fieldnames = ['document'] + QUESTION_IDS
     
     # 生成带时间戳的文件名
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    csv_filename = f"query_results_{timestamp}.csv"
-    csv_path = os.path.join(output_dir, csv_filename)
+    xlsx_filename = f"query_results_{timestamp}.xlsx"
+    xlsx_path = os.path.join(output_dir, xlsx_filename)
     
     # 同时创建一个最新结果的链接（覆盖）
-    latest_csv_path = os.path.join(output_dir, "query_results_latest.csv")
+    latest_xlsx_path = os.path.join(output_dir, "query_results_latest.xlsx")
     
     # 统计信息
     stats = {
@@ -30,30 +31,26 @@ def save_results_to_csv(all_results, output_dir):
         'empty_answers': 0
     }
     
-    # 将结果保存为CSV
-    with open(csv_path, 'w', newline='', encoding='utf-8') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        
-        # 写入每个文档的所有问题结果
-        for doc_name, results in all_results.items():
-            # 统计解析失败和查询失败
-            for question_id in QUESTION_IDS:
-                if question_id in results:
-                    if "[解析失败]" in results[question_id]:
-                        stats['parse_failures'] += 1
-                    elif "[查询失败]" in results[question_id]:
-                        stats['query_failures'] += 1
-                    elif results[question_id].strip() == "N/A" or results[question_id].strip() == "":
-                        stats['empty_answers'] += 1
-            
-            writer.writerow(results)
+    # 构建DataFrame
+    rows = []
+    for doc_name, results in all_results.items():
+        row = {k: results.get(k, "") for k in fieldnames}
+        # 统计解析失败和查询失败
+        for question_id in QUESTION_IDS:
+            if question_id in results:
+                if "[解析失败]" in results[question_id]:
+                    stats['parse_failures'] += 1
+                elif "[查询失败]" in results[question_id]:
+                    stats['query_failures'] += 1
+                elif results[question_id].strip() == "N/A" or results[question_id].strip() == "":
+                    stats['empty_answers'] += 1
+        rows.append(row)
+    df = pd.DataFrame(rows, columns=fieldnames)
     
+    # 保存为xlsx
+    df.to_excel(xlsx_path, index=False)
     # 复制到最新结果文件
-    with open(csv_path, 'r', encoding='utf-8') as src:
-        content = src.read()
-    with open(latest_csv_path, 'w', encoding='utf-8') as dst:
-        dst.write(content)
+    df.to_excel(latest_xlsx_path, index=False)
     
     # 保存统计信息
     stats_path = os.path.join(output_dir, f"query_stats_{timestamp}.json")
@@ -61,8 +58,8 @@ def save_results_to_csv(all_results, output_dir):
         json.dump(stats, f, indent=2)
     
     print(f"\n💾 查询结果已保存到:")
-    print(f"   - 主文件: {csv_path}")
-    print(f"   - 最新结果: {latest_csv_path}")
+    print(f"   - 主文件: {xlsx_path}")
+    print(f"   - 最新结果: {latest_xlsx_path}")
     print(f"   - 统计信息: {stats_path}")
     
     # 显示统计摘要
@@ -74,7 +71,7 @@ def save_results_to_csv(all_results, output_dir):
         print(f"   - 空值/N/A: {stats['empty_answers']} ({stats['empty_answers']/total_questions*100:.1f}%)")
         print(f"   - 解析失败: {stats['parse_failures']} ({stats['parse_failures']/total_questions*100:.1f}%)")
     
-    return csv_path
+    return xlsx_path
 
 def validate_raw_responses(raw_response_dir='raw_responses'):
     """验证原始响应目录中的文件"""

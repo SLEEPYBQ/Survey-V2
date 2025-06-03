@@ -7,7 +7,7 @@ PDF to Markdown 转换及批量问答工具
 from config import parse_args, detect_device
 from pdf_converter import convert_pdfs_to_markdown
 from query_engine import query_all_documents
-from utils import save_results_to_csv
+from utils import save_results_to_xlsx
 
 def main():
     """主函数"""
@@ -55,7 +55,7 @@ def main():
         
         # 保存结果到CSV
         if all_results:
-            save_results_to_csv(all_results, args.output_folder)
+            save_results_to_xlsx(all_results, args.output_folder)
     
     print("\n🎉 所有任务完成！")
 
