@@ -154,8 +154,8 @@ def query_document_with_combined_questions(markdown_path, client, model, verbose
             messages=[
                 {"role": "user", "content": combined_prompt}
             ],
-            temperature=0.1,
-            max_tokens=6000
+            temperature=0.0,
+            max_tokens=10000
         )
         
         result_text = response.choices[0].message.content
