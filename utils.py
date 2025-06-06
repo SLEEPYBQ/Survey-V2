@@ -7,13 +7,13 @@ from config import QUESTION_IDS
 import pandas as pd
 
 def save_results_to_xlsx(all_results, output_dir):
-    """保存结果到XLSX文件"""
+    """保存结果到XLSX文件，将答案和源信息分为两行"""
     
     # 创建输出目录
     os.makedirs(output_dir, exist_ok=True)
     
-    # 构建表头
-    fieldnames = ['document'] + QUESTION_IDS
+    # 构建表头：添加类型标识符列
+    fieldnames = ['document', 'content_type'] + QUESTION_IDS
     
     # 生成带时间戳的文件名
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -31,20 +31,48 @@ def save_results_to_xlsx(all_results, output_dir):
         'empty_answers': 0
     }
     
-    # 构建DataFrame
+    # 构建DataFrame - 每个文档产生两行：一行答案，一行源信息
     rows = []
     for doc_name, results in all_results.items():
-        row = {k: results.get(k, "") for k in fieldnames}
-        # 统计解析失败和查询失败
+        # 分离答案和源信息
+        answer_row = {'document': doc_name, 'content_type': 'answer'}
+        source_row = {'document': doc_name, 'content_type': 'source'}
+        
         for question_id in QUESTION_IDS:
             if question_id in results:
-                if "[解析失败]" in results[question_id]:
+                full_content = results[question_id]
+                
+                # 统计信息
+                if "[解析失败]" in full_content:
                     stats['parse_failures'] += 1
-                elif "[查询失败]" in results[question_id]:
+                elif "[查询失败]" in full_content:
                     stats['query_failures'] += 1
-                elif results[question_id].strip() == "N/A" or results[question_id].strip() == "":
-                    stats['empty_answers'] += 1
-        rows.append(row)
+                
+                # 分离答案和源信息
+                if "\nSource:" in full_content:
+                    answer_part, source_part = full_content.split("\nSource:", 1)
+                    answer_row[question_id] = answer_part.strip()
+                    source_row[question_id] = source_part.strip()
+                    
+                    # 检查是否为空答案
+                    if answer_part.strip() in ["N/A", ""]:
+                        stats['empty_answers'] += 1
+                else:
+                    # 如果没有Source标记，整个内容作为答案
+                    answer_row[question_id] = full_content.strip()
+                    source_row[question_id] = ""
+                    
+                    if full_content.strip() in ["N/A", ""]:
+                        stats['empty_answers'] += 1
+            else:
+                answer_row[question_id] = ""
+                source_row[question_id] = ""
+        
+        # 添加答案行和源信息行
+        rows.append(answer_row)
+        rows.append(source_row)
+    
+    # 创建DataFrame
     df = pd.DataFrame(rows, columns=fieldnames)
     
     # 保存为xlsx
@@ -70,6 +98,7 @@ def save_results_to_xlsx(all_results, output_dir):
         print(f"   - 成功解析: {successful_parses}/{total_questions} ({successful_parses/total_questions*100:.1f}%)")
         print(f"   - 空值/N/A: {stats['empty_answers']} ({stats['empty_answers']/total_questions*100:.1f}%)")
         print(f"   - 解析失败: {stats['parse_failures']} ({stats['parse_failures']/total_questions*100:.1f}%)")
+        print(f"   - 总行数: {len(rows)} (每个文档2行：答案行+源信息行)")
     
     return xlsx_path
 
@@ -127,7 +156,13 @@ def create_summary_report(all_results, output_dir):
             answers = []
             for doc_name, results in all_results.items():
                 if question_id in results:
-                    answer = results[question_id].split('\nSource:')[0].strip()
+                    full_content = results[question_id]
+                    # 提取答案部分（Source之前的内容）
+                    if "\nSource:" in full_content:
+                        answer = full_content.split('\nSource:')[0].strip()
+                    else:
+                        answer = full_content.strip()
+                    
                     if answer and "[解析失败]" not in answer and "[查询失败]" not in answer and answer != "N/A":
                         answers.append(f"• {doc_name}: {answer[:100]}{'...' if len(answer) > 100 else ''}")
             

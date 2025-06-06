@@ -19,7 +19,7 @@ def parse_args():
                        help='执行模式: markdown(只生成markdown), query(只查询), all(生成markdown后查询) (默认: all)')
     
     # 设备参数 (用于PDF转换)
-    parser.add_argument('--device', default='auto', choices=['auto', 'cpu', 'cuda', 'mps'],
+    parser.add_argument('--device', default='cuda', choices=['auto', 'cpu', 'cuda', 'mps'],
                        help='指定设备 (默认: auto自动检测)')
     parser.add_argument('--no-gpu', action='store_true',
                        help='强制使用CPU，不使用任何GPU')
@@ -31,7 +31,7 @@ def parse_args():
                        help='强制OCR处理整个文档')
     
     # OpenAI API参数
-    parser.add_argument('--api-key', default='YOUR-API-KEY',
+    parser.add_argument('--api-key', default='sk-wqEoMUckbUlrTL4tVcz6kOvn1Gw9Uj499VahouSP83cdtv4c',
                        help='OpenAI API密钥')
     parser.add_argument('--api-base', default='https://api.openai-proxy.org/v1',
                        help='OpenAI API Base URL')
@@ -84,18 +84,43 @@ def detect_device(args):
     os.environ['TORCH_DEVICE'] = device
     return device
 
-# 问题ID列表 - 用于CSV列名（使用下划线格式，与提示词中的格式一致）
+# 问题ID列表 - 用于XLSX列名
 QUESTION_IDS = [
-    "involved_stakeholder", "sample_size", "country", "age", "gender",
-    "demographic_background", "cognitive_and_physical_impairment", "needs_and_expectations",
-    "application_context", "process_of_the_care", "methodology", "care_type",
-    "robot_type", "robot_name", "design_goal", "robot_concern_function",
-    "facilitating_functions", "inhibitory_functions", "stakeholder_facilitating_characteristics",
-    "stakeholder_inhibitory_characteristics", "engagement", "acceptance", "trust",
-    "key_findings", "additional_info", "testing_context"
+    "involved_stakeholder",
+    "sample_size",
+    "country",
+    "age",
+    "gender",
+    "demographic_background",
+    "technology_literacy",
+    "cognitive_and_physical_impairment",
+    "needs_and_expectations",
+    "application_context",
+    "testing_context",
+    "process_of_the_care",
+    "methodology",
+    "robot_type",
+    "robot_name",
+    "design_goal",
+    "robot_general_function",
+    "facilitating_functions",
+    "inhibitory_functions",
+    "stakeholder_facilitating_characteristics",
+    "stakeholder_inhibitory_characteristics",
+    "engagement",
+    "acceptance",
+    "robot_function_effectiveness",
+    "user_satisfaction",
+    "user_curiosity",
+    "user_trust_reliance",
+    "user_understanding",
+    "learning_curve_productivity",
+    "system_controllability_interaction",
+    "key_findings",
+    "additional_info"
 ]
 
-# 问题显示名称和对应ID的映射（保持向后兼容）
+# 问题显示名称和对应ID的映射
 QUESTION_PATTERNS = [
     ("Involved Stakeholder", "involved_stakeholder"),
     ("Sample Size", "sample_size"),
@@ -103,24 +128,30 @@ QUESTION_PATTERNS = [
     ("Age", "age"),
     ("Gender", "gender"),
     ("Demographic Background", "demographic_background"),
-    ("Cognitive And Physical Impairment", "cognitive_and_physical_impairment"),
-    ("Needs And Expectations", "needs_and_expectations"),
+    ("Technology Literacy", "technology_literacy"),
+    ("Cognitive and Physical Impairment", "cognitive_and_physical_impairment"),
+    ("Needs and Expectations", "needs_and_expectations"),
     ("Application Context", "application_context"),
-    ("Process Of The Care", "process_of_the_care"),
+    ("Testing Context", "testing_context"),
+    ("Process of the Care", "process_of_the_care"),
     ("Methodology", "methodology"),
-    ("Care Type", "care_type"),
     ("Robot Type", "robot_type"),
     ("Robot Name", "robot_name"),
     ("Design Goal", "design_goal"),
-    ("Robot Concern Function", "robot_concern_function"),
-    ("Facilitating Functions", "facilitating_functions"),  
+    ("Robot General Function", "robot_general_function"),
+    ("Facilitating Functions", "facilitating_functions"),
     ("Inhibitory Functions", "inhibitory_functions"),
     ("Stakeholder Facilitating Characteristics", "stakeholder_facilitating_characteristics"),
     ("Stakeholder Inhibitory Characteristics", "stakeholder_inhibitory_characteristics"),
     ("Engagement", "engagement"),
     ("Acceptance", "acceptance"),
-    ("Trust", "trust"),
+    ("Robot Function Effectiveness", "robot_function_effectiveness"),
+    ("User Satisfaction", "user_satisfaction"),
+    ("User Curiosity", "user_curiosity"),
+    ("User Trust Reliance", "user_trust_reliance"),
+    ("User Understanding", "user_understanding"),
+    ("Learning Curve Productivity", "learning_curve_productivity"),
+    ("System Controllability Interaction", "system_controllability_interaction"),
     ("Key Findings", "key_findings"),
-    ("Additional Info", "additional_info"),
-    ("Testing Context", "testing_context")
+    ("Additional Info", "additional_info")
 ]
