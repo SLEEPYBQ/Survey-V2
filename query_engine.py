@@ -35,63 +35,65 @@ QUESTIONS:
 
 3. country: What is the country or region of the participants as explicitly stated in the paper (do not infer from the authors' affiliations)?
 
-4. age: What age-related numerical information is provided in the study (e.g., age range like 65-80, mean age like 72, or median age like 70)? Exclude vague descriptions such as "older adults" or "elderly".
+4. culture: Whether the study had any adaptations or accommodations or examination of cultural considerations? If yes, please elaborate.  
 
-5. gender: What gender-related information is reported in the study?
+5. age: What age-related numerical information is provided in the study (e.g., age range like 65-80, mean age like 72, or median age like 70)? Exclude vague descriptions such as "older adults" or "elderly".
 
-6. demographic_background: What demographic background information is reported? For example, socioeconomic status, educational level, living context for elderly people, or working context for caregivers. Include additional details such as language proficiency or professional background if mentioned. Exclude technology literacy. Use the exact terminology from the original text. Provide as comprehensive a response as possible, including all relevant information.
+6. gender: What gender-related information is reported in the study?
 
-7. technology_literacy: What information is provided about the technology literacy of stakeholders? This includes their experience interacting with robots, understanding of robots, acceptance of technology, or frequency of using technological products.
+7. demographic_background: What demographic background information is reported? For example, socioeconomic status, educational level, living context for elderly people, or working context for caregivers. Include additional details such as language proficiency or professional background if mentioned. Exclude technology literacy. Use the exact terminology from the original text. Provide as comprehensive a response as possible, including all relevant information.
 
-8. cognitive_and_physical_impairment: What cognitive and physical impairments are described among the elderly participants? Separate cognitive impairments (e.g., memory issues, dementia) and physical impairments (e.g., mobility issues, arthritis) in the output. If standardized measurement tools were used, report the specific scores and scores of the scale; if qualitative terms (e.g., 'mild', 'severe') were used, report them accordingly. If no measurement tools or qualitative descriptions are used, do not extract information.
+8. technology_literacy: What information is provided about the technology literacy of stakeholders? This includes their experience interacting with robots, understanding of robots, acceptance of technology, or frequency of using technological products.
 
-9. needs_and_expectations: What are the explicitly stated or inferred needs and expectations of users, primarily elderly people and caregivers? This includes directly expressed needs and user preferences accompanied by explanatory comments during interviews or post-trial reflections. In the output, clearly separate needs (e.g., functional requirements) and expectations (e.g., desired outcomes or preferences). Use the exact terminology from the original text. Provide as comprehensive a response as possible, including all relevant information.
+9. cognitive_and_physical_impairment: What cognitive and physical impairments are described among the elderly participants? Separate cognitive impairments (e.g., memory issues, dementia) and physical impairments (e.g., mobility issues, arthritis) in the output. If standardized measurement tools were used, report the specific scores and scores of the scale; if qualitative terms (e.g., 'mild', 'severe') were used, report them accordingly. If no measurement tools or qualitative descriptions are used, do not extract information.
 
-10. application_context: What is the envisioned future application context for the robot as mentioned in the paper? Check the introduction, discussion or conclusion sections that may describe potential future application scenarios, not the current testing scenarios.
+10. needs_and_expectations: What are the explicitly stated or inferred needs and expectations of users, primarily elderly people and caregivers? This includes directly expressed needs and user preferences accompanied by explanatory comments during interviews or post-trial reflections. In the output, clearly separate needs (e.g., functional requirements) and expectations (e.g., desired outcomes or preferences). Use the exact terminology from the original text. Provide as comprehensive a response as possible, including all relevant information.
 
-11. testing_context: What is the testing context of the study? (For example, was the test conducted in a lab, care home, hospital, private residence, or another setting?)
+11. application_context: What is the envisioned future application context for the robot as mentioned in the paper? Check the introduction, discussion or conclusion sections that may describe potential future application scenarios, not the current testing scenarios.
 
-12. process_of_the_care: What information is provided about the duration and stage of the care process? Specify whether the study involved a first encounter, short-term use, or long-term deployment, and include session duration and frequency if available. If multiple experiments are involved, describe the care process for each experiment.
+12. testing_context: What is the testing context of the study? (For example, was the test conducted in a lab, care home, hospital, private residence, or another setting?)
 
-13. methodology: What research methodology was used in the study (e.g., qualitative interviews, quantitative surveys, randomized controlled trials)?
+13. process_of_the_care: What information is provided about the duration and stage of the care process? Specify whether the study involved a first encounter, short-term use, or long-term deployment, and include session duration and frequency if available. If multiple experiments are involved, describe the care process for each experiment.
 
-14. robot_type: What type of robot is used in the study? (If the paper uses terms like 'human-like' or 'animal-like', use those directly; otherwise, provide a short description of the robot's appearance.)
+14. methodology: What research methodology was used in the study (e.g., qualitative interviews, quantitative surveys, randomized controlled trials)?
 
-15. robot_name: What is the name of the robot used in the study?
+15. robot_type: What type of robot is used in the study? (If the paper uses terms like 'human-like' or 'animal-like', use those directly; otherwise, provide a short description of the robot's appearance.)
 
-16. design_goal: What design goals were set for the robot or its interaction functions in the current study? These are typically found in the aim, objective, experimental design, or discussion sections of the paper.
+16. robot_name: What is the name of the robot used in the study?
 
-17. robot_general_function: What functionalities of the robot were demonstrated, deployed, or introduced to users during the study?
+17. design_goal: What design goals were set for the robot or its interaction functions in the current study? These are typically found in the aim, objective, experimental design, or discussion sections of the paper.
 
-18. facilitating_functions: What specific robot functions or features are reported to enhance the user experience (i.e., positive features)? Provide a comprehensive list of all relevant information. If multiple robots are used, list results associated with each robot, explicitly referencing the robot's name. Include brief explanations for why these features are considered beneficial. Provide as comprehensive a response as possible, including all relevant information.
+18. robot_general_function: What functionalities of the robot were demonstrated, deployed, or introduced to users during the study?
 
-19. inhibitory_functions: What specific robot functions or features are reported to hinder the user experience (i.e., negative features)? Provide a comprehensive list of all relevant information. If multiple robots are used, list results associated with each robot, explicitly referencing the robot's name. Include brief explanations for why these features are considered detrimental. Provide as comprehensive a response as possible, including all relevant information.
+19. facilitating_functions: What specific robot functions or features are reported to enhance the user experience (i.e., positive features)? Provide a comprehensive list of all relevant information. If multiple robots are used, list results associated with each robot, explicitly referencing the robot's name. Include brief explanations for why these features are considered beneficial. Provide as comprehensive a response as possible, including all relevant information.
 
-20. stakeholder_facilitating_characteristics: What inherent characteristics of the stakeholders are associated with better robot use, acceptance, or trust? Provide a comprehensive list of all relevant information, focusing on user characteristics (e.g., personality traits, prior experience) rather than changes or behaviors post-robot interaction. If multiple robots are used, list results associated with each robot, explicitly referencing the robot's name. Include brief explanations where available. Provide as comprehensive a response as possible, including all relevant information.
+20. inhibitory_functions: What specific robot functions or features are reported to hinder the user experience (i.e., negative features)? Provide a comprehensive list of all relevant information. If multiple robots are used, list results associated with each robot, explicitly referencing the robot's name. Include brief explanations for why these features are considered detrimental. Provide as comprehensive a response as possible, including all relevant information.
 
-21. stakeholder_inhibitory_characteristics: What inherent characteristics of the stakeholders are associated with reduced robot use, lower acceptance, or lower trust? Provide a comprehensive list of all relevant information, focusing on user characteristics (e.g., personality traits, prior experience) rather than changes or behaviors post-robot interaction. If multiple robots are used, list results associated with each robot, explicitly referencing the robot's name. Include brief explanations where available. Provide as comprehensive a response as possible, including all relevant information.
+21. stakeholder_facilitating_characteristics: What inherent characteristics of the stakeholders are associated with better robot use, acceptance, or trust? Provide a comprehensive list of all relevant information, focusing on user characteristics (e.g., personality traits, prior experience) rather than changes or behaviors post-robot interaction. If multiple robots are used, list results associated with each robot, explicitly referencing the robot's name. Include brief explanations where available. Provide as comprehensive a response as possible, including all relevant information.
 
-22. engagement: What evaluation of user engagement in the robot is reported in the study? This may include quantitative measurements (e.g., rating scales) or qualitative descriptions (e.g., 'high engagement', 'low acceptance', 'gradual trust development').
+22. stakeholder_inhibitory_characteristics: What inherent characteristics of the stakeholders are associated with reduced robot use, lower acceptance, or lower trust? Provide a comprehensive list of all relevant information, focusing on user characteristics (e.g., personality traits, prior experience) rather than changes or behaviors post-robot interaction. If multiple robots are used, list results associated with each robot, explicitly referencing the robot's name. Include brief explanations where available. Provide as comprehensive a response as possible, including all relevant information.
 
-23. acceptance: What evaluation of user acceptance in the robot is reported in the study? This may include quantitative measurements (e.g., rating scales) or qualitative descriptions (e.g., 'high engagement', 'low acceptance', 'gradual trust development').
+23. engagement: What evaluation of user engagement in the robot is reported in the study? This may include quantitative measurements (e.g., rating scales) or qualitative descriptions (e.g., 'high engagement', 'low acceptance', 'gradual trust development').
 
-24. robot_function_effectiveness: What evaluations of the performance and effectiveness of the robot's functions are reported in the study? What are the results of these evaluations? This may include quantitative metrics (e.g., accuracy) or qualitative assessments (e.g., 'high effectiveness', 'low effectiveness').
+24. acceptance: What evaluation of user acceptance in the robot is reported in the study? This may include quantitative measurements (e.g., rating scales) or qualitative descriptions (e.g., 'high engagement', 'low acceptance', 'gradual trust development').
 
-25. user_satisfaction: What evaluations of user satisfaction with the robot are reported in the study? What are the results of these evaluations? User satisfaction refers to the subjective feelings of fulfillment a user experiences regarding the robot. This may include quantitative metrics (e.g., rating scales) or qualitative descriptions (e.g., 'high satisfaction', 'low satisfaction').
+25. robot_function_effectiveness: What evaluations of the performance and effectiveness of the robot's functions are reported in the study? What are the results of these evaluations? This may include quantitative metrics (e.g., accuracy) or qualitative assessments (e.g., 'high effectiveness', 'low effectiveness').
 
-26. user_curiosity: What evaluations of the user's curiosity about robots are reported in the study? What are the results of these evaluations? This may include quantitative metrics (e.g., rating scales) or qualitative descriptions (e.g., 'high curiosity', 'low curiosity').
+26. user_satisfaction: What evaluations of user satisfaction with the robot are reported in the study? What are the results of these evaluations? User satisfaction refers to the subjective feelings of fulfillment a user experiences regarding the robot. This may include quantitative metrics (e.g., rating scales) or qualitative descriptions (e.g., 'high satisfaction', 'low satisfaction').
 
-27. user_trust_reliance: What evaluations of the user's trust in robots are reported in the study? What are the results of these evaluations? This may include quantitative metrics (e.g., rating scales) or qualitative descriptions (e.g., 'high trust', 'low trust').
+27. user_curiosity: What evaluations of the user's curiosity about robots are reported in the study? What are the results of these evaluations? This may include quantitative metrics (e.g., rating scales) or qualitative descriptions (e.g., 'high curiosity', 'low curiosity').
 
-28. user_understanding: What evaluations of the user's understanding of robots are reported in the study? What are the results of these evaluations? This may include quantitative metrics (e.g., rating scales) or qualitative descriptions (e.g., 'high level of understanding', 'low level of understanding').
+28. user_trust_reliance: What evaluations of the user's trust in robots are reported in the study? What are the results of these evaluations? This may include quantitative metrics (e.g., rating scales) or qualitative descriptions (e.g., 'high trust', 'low trust').
 
-29. learning_curve_productivity: What evaluations of how easily users learn to use robots are reported in the study? What are the results of these evaluations? This may include quantitative metrics (e.g., rating scales) or qualitative descriptions (e.g., 'hard', 'medium', 'easy').
+29. user_understanding: What evaluations of the user's understanding of robots are reported in the study? What are the results of these evaluations? This may include quantitative metrics (e.g., rating scales) or qualitative descriptions (e.g., 'high level of understanding', 'low level of understanding').
 
-30. system_controllability_interaction: What evaluations of the robots’ controllability and adaptiveness are reported in the study? What are the results of these evaluations? Controllability and interaction refer to whether the robot is context-aware, flexible, and tailored to meet the specific needs and preferences of users. This may include quantitative metrics (e.g., rating scales) or qualitative descriptions (e.g., 'high controllability and adaptiveness', 'low adaptiveness').
+30. learning_curve_productivity: What evaluations of
 
-31. key_findings: What are the key findings of the study, as typically summarized in the conclusion or discussion section?
+31. system_controllability_interaction: What evaluations of the robots’ controllability and adaptiveness are reported in the study? What are the results of these evaluations? Controllability and interaction refer to whether the robot is context-aware, flexible, and tailored to meet the specific needs and preferences of users. This may include quantitative metrics (e.g., rating scales) or qualitative descriptions (e.g., 'high controllability and adaptiveness', 'low adaptiveness').
 
-32. additional_info: What additional information is provided about the study, such as limitations or other relevant details?
+32. key_findings: What are the key findings of the study, as typically summarized in the conclusion or discussion section?
+
+33. additional_info: What additional information is provided about the study, such as limitations or other relevant details?
 
 RESPONSE FORMAT EXAMPLE:
 ## involved stakeholder
