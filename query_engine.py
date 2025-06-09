@@ -107,7 +107,7 @@ Source: The study reported an accuracy of 85percent for the robot's task perform
 [Continue for all 32 questions using their exact question IDs]
 
 IMPORTANT REMINDERS:
-- Use the exact question IDs: involved_stakeholder, sample_size, country, age, gender, demographic_background, technology_literacy, cognitive_and_physical_transformation, needs_and_requirements, application_context, testing_context, process_of_the_care, methodology, robot_type, robot_name, design_goal, robot_general_function, facilitating_functions, inhibitory_functions, stakeholder_facilitating_characteristics, stakeholder_inhibitory_characteristics, engagement, acceptance, robot_function_effectiveness, user_satisfaction, user_curiosity, user_trust_reliance, user_understanding, learning_curve_productivity, system_controllability_interaction, key_findings, additional_info
+- Use the exact question IDs: involved_stakeholder, sample_size, country, culture, age, gender, demographic_background, technology_literacy, cognitive_and_physical_transformation, needs_and_requirements, application_context, testing_context, process_of_the_care, methodology, robot_type, robot_name, design_goal, robot_general_function, facilitating_functions, inhibitory_functions, stakeholder_facilitating_characteristics, stakeholder_inhibitory_characteristics, engagement, acceptance, robot_function_effectiveness, user_satisfaction, user_curiosity, user_trust_reliance, user_understanding, learning_curve_productivity, system_controllability_interaction, key_findings, additional_info
 - Each answer MUST start with "Answer: "
 - Each source MUST start with "Source: "
 - Do not use any other formatting
