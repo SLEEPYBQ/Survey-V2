@@ -49,7 +49,7 @@ cd Survey-V2
 ```bash
 conda create -n survey python=3.11
 conda activate survey
-pip install marker
+pip install marker-pdf
 ```
 
 
@@ -76,6 +76,7 @@ python main.py --input-folder ./papers --markdown-folder ./converted --output-fo
 
 # Use specific GPU device
 python main.py --device cuda
+python main.py --device mps
 
 # Force CPU processing
 python main.py --no-gpu
