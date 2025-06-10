@@ -35,7 +35,7 @@ QUESTIONS:
 
 3. country: What is the country or region of the participants as explicitly stated in the paper (do not infer from the authors' affiliations)?
 
-4. culture: Whether the study had any adaptations or accommodations or examination of cultural considerations? If yes, please elaborate.  
+4. culture: Whether the study adapted or accommodated to the cultural backgrounds of participants (e.g., language adjustments, behavioral modifications, or interface changes), and whether the study analyzed or investigated the impact of cultural factors (e.g., values, norms, or social context) on HRI outcomes. If yes, please report. If no, please answer N/A
 
 5. age: What age-related numerical information is provided in the study (e.g., age range like 65-80, mean age like 72, or median age like 70)? Exclude vague descriptions such as "older adults" or "elderly".
 
