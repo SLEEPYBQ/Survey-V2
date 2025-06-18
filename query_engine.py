@@ -87,7 +87,7 @@ QUESTIONS:
 
 29. user_understanding: What evaluations of the user's understanding of robots are reported in the study? What are the results of these evaluations? This may include quantitative metrics (e.g., rating scales) or qualitative descriptions (e.g., 'high level of understanding', 'low level of understanding').
 
-30. learning_curve_productivity: What evaluations of
+30. learning_curve_productivity: What evaluations of how easily users learn to use robots are reported in the study? What are the results of these evaluations? This may include quantitative metrics (e.g., rating scales) or qualitative descriptions (e.g., 'hard', 'medium', 'easy').
 
 31. system_controllability_interaction: What evaluations of the robots’ controllability and adaptiveness are reported in the study? What are the results of these evaluations? Controllability and interaction refer to whether the robot is context-aware, flexible, and tailored to meet the specific needs and preferences of users. This may include quantitative metrics (e.g., rating scales) or qualitative descriptions (e.g., 'high controllability and adaptiveness', 'low adaptiveness').
 
