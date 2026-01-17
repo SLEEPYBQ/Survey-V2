@@ -33,8 +33,8 @@ PaperQA provides a complete workflow for analyzing research papers:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/SLEEPYBQ/Survey-V2.git
-cd Survey-V2
+git clone https://github.com/SLEEPYBQ/PaperQA.git
+cd PaperQA
 ```
 
 ### 2. Create Virtual Environment
