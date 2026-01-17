@@ -1,0 +1,7 @@
+Document: From Gap to Synergy  Enhancing Contextual Understanding through Human-Machine Collaboration in Personalized Systems.md
+Timestamp: 20260117_174950
+================================================================================
+
+## computational_modelling
+Answer: Formative Study (primary); Design challenges/requirements: ambiguity in context expressions, omission of context information, explanatory affordance, concept-level controls
+Source: “We identify several challenges in realizing this collaborative process through a formative study, such as ambiguity in context expressions, omission of context information in user input language, and providing comprehensible interfaces.” (Introduction); “Inspired by the formative study, we present LangAware…” (Section 4); “These challenges include difficulties with understanding user language and providing comprehensible interfaces.” (Section 3.2); “These challenges include difficulties with understanding user language and providing comprehensible interfaces, as we have outlined and presented in Table 1.” (Section 3.2); Table 1 “Challenges in natural language-based human-machine context bridging” lists: “Ambiguity in Context Expressions”, “Omission of Context Information”, “Explanatory Affordance”, “Concept-level Controls”

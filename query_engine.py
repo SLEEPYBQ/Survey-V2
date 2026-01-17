@@ -5,7 +5,12 @@ from datetime import datetime
 from concurrent.futures import ProcessPoolExecutor
 from openai import OpenAI
 from tqdm import tqdm
-from question_loader import get_config
+from question_loader import get_config, set_config
+
+
+def _init_worker(config):
+    """Initialize worker process with question configuration."""
+    set_config(config)
 
 
 def create_combined_prompt(markdown_content):
@@ -105,8 +110,7 @@ def query_document_with_combined_questions(markdown_path, client, model, verbose
             messages=[
                 {"role": "user", "content": combined_prompt}
             ],
-            temperature=0.0,
-            max_tokens=10000
+            temperature=0.0
         )
 
         result_text = response.choices[0].message.content
@@ -270,7 +274,11 @@ def query_all_documents(args):
     parse_stats = {'total': 0, 'failures': 0}
 
     # Execute queries in parallel
-    with ProcessPoolExecutor(max_workers=args.max_workers) as executor:
+    with ProcessPoolExecutor(
+        max_workers=args.max_workers,
+        initializer=_init_worker,
+        initargs=(config,)
+    ) as executor:
         for doc_name, success, results, error in tqdm(
             executor.map(query_documents_wrapper, query_args),
             total=len(query_args),

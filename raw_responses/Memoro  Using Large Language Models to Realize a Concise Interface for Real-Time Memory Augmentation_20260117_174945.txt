@@ -1,0 +1,7 @@
+Document: Memoro  Using Large Language Models to Realize a Concise Interface for Real-Time Memory Augmentation.md
+Timestamp: 20260117_174945
+================================================================================
+
+## computational_modelling
+Answer: Theory-driven (Retrieval-Augmented Generation)
+Source: “It uses a method called retrieval augmented generation developed by Lewis et al[42]”; “The contextual search is implemented using the following approach… the query and the Current Context… are combined to retrieve relevant external memories from the vector database… The query, current context, and retrieved relevant memories are then combined… to form a prompt for the text generation language model.”; “The question inference leverages another iteration of prompting the language model to produce the query.”

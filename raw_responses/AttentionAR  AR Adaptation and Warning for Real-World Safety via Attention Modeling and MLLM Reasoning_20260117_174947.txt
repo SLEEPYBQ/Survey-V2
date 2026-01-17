@@ -1,0 +1,7 @@
+Document: AttentionAR  AR Adaptation and Warning for Real-World Safety via Attention Modeling and MLLM Reasoning.md
+Timestamp: 20260117_174947
+================================================================================
+
+## computational_modelling
+Answer: Formative Study; Details: Design goal of “proportional warnings” (alert intensity proportional to detected risk severity) and a “three-tiered risk classification model” (low/moderate/high risk) derived from an online survey.
+Source: “To gain insights into users' perceptions of safety hazards and their expectations for safety assistive systems, we conducted an online survey with 26 participants.”; “Based on the survey results, we propose the following design implications for an AR-based safety assistive system. A core design goal, derived directly from this user feedback, was to create a system that provides proportional warnings: the intensity of the alert should be directly proportional to the severity of the detected risk”; “Based on participant feedback, we developed a three-tiered risk classification model. … The final classification is as follows: Low Risk… Moderate Risk… High Risk…”; “Following insights from our user survey, we developed AttentionAR”

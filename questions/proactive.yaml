@@ -1,0 +1,26 @@
+survey:
+  name: "Proactive Agent"
+  description: "Proactive Agent"
+
+questions:
+  - id:  computational_modelling
+    display_name: "Computational Modelling"
+    prompt: |
+      You need to determine if the design and computational modelling of the proactive agent in the paper was primarily:
+      1.  Theory-Driven: Derived from established theoretical frameworks (e.g., psychology, communication theory, cognitive science).
+      2.  Formative Study-Driven: Derived empirically from a formative study (e.g., interviews, surveys, workshops) conducted by the authors to identify user needs.
+      3.  Decision:
+      If the paper explicitly builds the model based on a theory, classify as "Theory-driven" and extract the Theory Name.
+      If the paper derives the system features/goals from their own user research, classify as "Formative Study" and extract the Design Goals/Requirements.
+      Note: Some papers do both. Choose the one that primarily dictates the computational or architectural choices of the agent. If unclear, note both.
+      Few-Shot Examples
+      Example 1 (Theory-driven)
+      Reasoning: The authors propose a unified approach to detecting situational impairments. They explicitly state their motivation lies in "Dix et al.'s fundamental model of human-computer interaction" and "He and Card's information processing system". They model the availability of input/output channels based on the theory of Situationally Induced Impairments and Disabilities (SIIDs).
+      Output:
+      Type: Theory-driven
+      Details: Situationally Induced Impairments and Disabilities (SIIDs) theory; Human Information Processing Model.
+      Example 2 (Formative Study-driven)
+      Reasoning: The authors conducted a formative study to understand user barriers and preferences. They explicitly synthesize findings into "four design requirements": D1 (Analyze Context), D2 (Personalization), D3 (Knowledge Prioritization), and D4 (Minimize Distraction). The system is built to satisfy these empirically derived requirements.
+      Output:
+      Type: Formative Study
+      Details: Four design requirements (D1-D4): D1. Analyze Context and Provide "Unseen" and "Unknowns"; D2. Personalization to Fine-Tune Knowledge; D3. Knowledge Prioritization; D4. Minimize Distraction.

@@ -1,0 +1,7 @@
+Document: AiGet  Transforming Everyday Moments into Hidden Knowledge Discovery with AI Assistance on Smart Glasses.md
+Timestamp: 20260117_174953
+================================================================================
+
+## computational_modelling
+Answer: Formative Study; Design requirements D1–D4 (Analyze context and provide “Unseen” and “Unknowns” in real time; Personalization to fine-tune knowledge content; Knowledge prioritization to provide the most valuable information using “Novelty × (AlignUserPreference + Utility + Unexpectedness)”; Minimize distraction to primary tasks in mobile settings)
+Source: “Through formative studies, we introduce AiGet” (Abstract); “we first conducted a formative study to identify users' learning interests and challenges in everyday contexts.” (Section 1 Introduction); “we synthesized four design requirements for a wearable AI assistant based on participant feedback.” (Section 4.5.3); “[D1]: Analyze Context and Provide "Unseen" and "Unknowns" in Real Time.” (Section 4.5.3); “[D2]: Personalization is Needed to Fine-Tune Knowledge Content.” (Section 4.5.3); “[D3]: Knowledge Prioritization to Provide the Most Valuable Information… By integrating these elementsinto the weighting formula: Novelty × (AlignUserPreference + Utility + Unexpectedness)” (Section 4.5.3); “[D4]: Minimize Distraction to Primary Tasks in Mobile Settings.” (Section 4.5.3); “We introduce AiGet, a proof-of-concept system that aligns with the aforementioned design goals (Sec 4.5.3).” (Section 5 AiGet System)

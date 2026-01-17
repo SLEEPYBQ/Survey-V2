@@ -1,0 +1,7 @@
+Document: Persistent Assistant  Seamless Everyday AI Interactions via Intent Grounding and Multimodal Feedback.md
+Timestamp: 20260117_174946
+================================================================================
+
+## computational_modelling
+Answer: Theory-driven (Grounding in conversation / grounding problem; Intent Grounding Continuum and Speech-Haptic Feedback Continuum)
+Source: “Persistent Assistant mitigates this by grounding user intent early in the interaction, allowing it to be reused throughout a session of repeated interactions. ‘Grounding’ here refers to the process of aligning the assistant's understanding with the user's goals, preferences, and context to ensure efective communication [4].” (Section 3.2.1); “We introduce the Intent Grounding Continuum (Figure 2, top)…” (Section 3.2.1); “Speech-Haptic Feedback Continuum. Our Speech-Haptic Feedback Continuum (Figure 2, bottom)…” (Section 3.2.3); Reference [4]: “Susan E Brennan. 2014. The grounding problem in conversations with and through computers.” (References)

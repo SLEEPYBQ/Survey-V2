@@ -1,0 +1,7 @@
+Document: ProMemAssist  Exploring Timely Proactive Assistance Through Working Memory Modeling in Multi-Modal Wearable Devices.md
+Timestamp: 20260117_174950
+================================================================================
+
+## computational_modelling
+Answer: Theory-driven (Working Memory theory, specifically Baddeley’s working memory model; also uses Cowan’s “Magical Mystery Four” capacity theory and Miller’s “magical number seven” capacity limit)
+Source: “Grounded in cognitive theories of WM, our system represents perceived information as memory items and episodes with encoding mechanisms, such as displacement and interference.”; “To capture these factors in a unified framework, we adopt a working memory (WM) model inspired by cognitive psychology and neuroscience [8, 22, 48].”; “The most widely studied model proposed by Baddeley et al. theorized the working memory to contain four major components…”; “Grounded by past studies and experiments, the perception memory has the capacity to store seven memory items [48]”; “Cowan et al. theorized that working memory content could be bounded and integrated into chunks of information, and that the working memory limit is four chunks of episodes [22].”

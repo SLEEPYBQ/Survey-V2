@@ -33,20 +33,20 @@ def parse_args():
                         help='Force OCR processing for entire document')
 
     # Question configuration
-    parser.add_argument('--questions', '-q', default=None,
+    parser.add_argument('--questions', '-q', default='questions/proactive.yaml',
                         help='Path to questions YAML config file '
                              '(default: questions/default.yaml or first .yaml in questions/)')
 
     # OpenAI API arguments
-    parser.add_argument('--api-key', default='xxx',
+    parser.add_argument('--api-key', default='',
                         help='OpenAI API key')
     parser.add_argument('--api-base', default='https://api.openai-proxy.org/v1',
                         help='OpenAI API Base URL')
-    parser.add_argument('--model', default='deepseek-chat',
+    parser.add_argument('--model', default='gpt-5.2-2025-12-11',
                         help='Model to use')
 
     # Concurrency arguments
-    parser.add_argument('--max-workers', type=int, default=8,
+    parser.add_argument('--max-workers', type=int, default=16,
                         help='Maximum concurrent workers for querying (default: 8)')
 
     # Other arguments

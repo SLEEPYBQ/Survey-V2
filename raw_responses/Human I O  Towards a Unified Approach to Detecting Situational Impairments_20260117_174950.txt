@@ -1,0 +1,7 @@
+Document: Human I O  Towards a Unified Approach to Detecting Situational Impairments.md
+Timestamp: 20260117_174950
+================================================================================
+
+## computational_modelling
+Answer: Theory-driven (Situationally Induced Impairments and Disabilities (SIIDs); Dix et al.’s fundamental model of human-computer interaction; He and Card’s human “information processing system” model). Also informed by a formative study (activity/environment/direct sensing cues; four-level availability scale).
+Source: “Situationally Induced Impairments and Disabilities (SIIDs)…” (Abstract); “Our motivation for using the availability of human input/output channels for detecting SIIDs lies on Dix et al.'s fundamental model of human-computer interaction [6]… He and Card [3] both describe human as an ‘information processing system’ with limited capacity to process information through various channels.” (Section 2.5); “We first conducted a formative study with 10 participants… These insights emphasize the need for systems to integrate activity, environment, and direct sensing cues… Our findings also suggest that systems should provide varying levels of channel availability… We iteratively developed a four-level scale for measuring channel availability: available, slightly affected, affected, and unavailable.” (Introduction)

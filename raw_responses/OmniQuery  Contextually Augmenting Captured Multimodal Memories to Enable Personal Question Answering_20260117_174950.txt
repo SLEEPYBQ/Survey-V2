@@ -1,0 +1,7 @@
+Document: OmniQuery  Contextually Augmenting Captured Multimodal Memories to Enable Personal Question Answering.md
+Timestamp: 20260117_174950
+================================================================================
+
+## computational_modelling
+Answer: Formative Study; Design informed by a one-month diary study that produced a taxonomy of contextual information (atomic context, composite context, semantic knowledge) used to guide the augmentation pipeline and taxonomy-based query augmentation/retrieval.
+Source: “We conducted a one-month diary study to collect realistic user queries and generated a taxonomy of necessary contextual information for integrating with captured memories.”; “The design of OmniQuery is informed by a taxonomy of contextual information that we generated from a one-month diary study with 29 participants.”; “Informed by the generated taxonomy, OmniQuery employs a queryagnostic preprocessing pipeline to augment existing captured memories.”; “OmniQuery first applies a taxonomy-based augmentation of the query by disambiguating and decomposing it into specific contextual elements”; “We identified three key types of contextual information that can be integrated with captured memories: (1) atomic context, (2) composite context, and (3) semantic knowledge.”
