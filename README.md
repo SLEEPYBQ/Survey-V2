@@ -2,7 +2,7 @@
 
 A comprehensive tool for converting PDF research papers to Markdown format and automatically extracting structured information using Large Language Models (LLMs).
 
-## 🚀 Features
+## Features
 
 - **PDF to Markdown Conversion**: Convert PDF research papers to clean Markdown format using marker library
 - **AI-Powered Question Answering**: Extract structured information from papers using LLM API (**Default: Deepseek-V3**)
@@ -10,8 +10,9 @@ A comprehensive tool for converting PDF research papers to Markdown format and a
 - **Flexible Execution Modes**: Choose between conversion-only, query-only, or full pipeline
 - **GPU Acceleration**: Support for CUDA, MPS (Apple Silicon), and CPU processing
 - **Structured Output**: Export results to CSV format for easy analysis
+- **Customized Questions**: Support Customized Questions using YAML
 
-## 📋 Requirements
+## Requirements
 
 
 
@@ -21,22 +22,8 @@ A comprehensive tool for converting PDF research papers to Markdown format and a
 - Optional: CUDA-capable GPU or Apple Silicon for faster PDF processing
 - API key for question answering functionality
 
-## 🗂️ Project Structure
 
-```
-your_project/
-├── main.py                 # Main program entry point
-├── config.py              # Configuration and argument parsing
-├── pdf_converter.py       # PDF conversion functionality
-├── query_engine.py        # LLM querying and response parsing
-├── utils.py               # Utility functions
-├── pdfs/                  # Input PDF files (default)
-├── markdowns/             # Generated Markdown files (default)
-├── raw_responses/         # LLM Output results (default)
-└── results/               # Query results and CSV output (default)
-```
-
-## 🔧 Installation
+## Installation
 
 1. Clone the repository:
 ```bash
@@ -53,7 +40,7 @@ pip install marker-pdf
 ```
 
 
-## 📚 Usage
+## Usage
 
 ### Basic Usage
 
@@ -91,6 +78,32 @@ python main.py --verbose
 python main.py --dry-run
 ```
 
+### Question Configuration
+
+Questions are defined in YAML files under `questions/` directory:
+
+```yaml
+# questions/hri_elderly.yaml
+survey:
+  name: "HRI Elderly Care"
+  description: "Human-Robot Interaction research papers"
+
+questions:
+  - id: involved_stakeholder
+    display_name: "Involved Stakeholder"
+    prompt: |
+      What are the involved stakeholders in the study?...
+```
+
+**Key properties:**
+- `id`: Internal identifier (used in parsing, Excel columns)
+- `display_name`: Human-readable name (for reports)
+- `prompt`: Full question text sent to LLM
+
+**To add a new survey topic:**
+1. Create `questions/your_topic.yaml` with your questions
+2. Run with `-q questions/your_topic.yaml`
+
 ### Command Line Arguments
 
 | Argument | Description | Default |
@@ -108,46 +121,8 @@ python main.py --dry-run
 | `--verbose`, `-v` | Enable verbose output | `False` |
 | `--dry-run` | Show files to process without executing | `False` |
 
-## 🔍 Extracted Information
 
-The tool extracts 26 structured data points from each research paper:
-
-### Study Participants
-- **Involved Stakeholder**: Study participants and their roles
-- **Sample Size**: Number of participants in the study
-- **Country**: Geographic location of the study
-- **Age**: Age-related information of participants
-- **Gender**: Gender distribution information
-- **Demographic Background**: Socioeconomic and educational details
-- **Cognitive and Physical Impairment**: Health status information
-
-### Study Design
-- **Methodology**: Research methods used
-- **Care Type**: Type of care being studied
-- **Testing Context**: Study environment and setting
-- **Process of the Care**: Duration and stages of the care process
-
-### Technology Focus
-- **Robot Type**: Description of the robot used
-- **Robot Name**: Specific robot model or name
-- **Design Goal**: Intended objectives of the robot design
-- **Robot Concern Function**: Robot functionalities demonstrated
-
-### User Experience
-- **Needs and Expectations**: User requirements and expectations
-- **Facilitating Functions**: Positive robot features
-- **Inhibitory Functions**: Negative robot features
-- **Stakeholder Facilitating Characteristics**: Positive user traits
-- **Stakeholder Inhibitory Characteristics**: Limiting user traits
-
-### Outcomes
-- **Engagement**: User engagement measurements
-- **Acceptance**: User acceptance levels
-- **Trust**: Trust in the robot technology
-- **Key Findings**: Main study conclusions
-- **Additional Info**: Limitations and other details
-
-## 📊 Output Format
+## Output Format
 
 Results are saved in CSV format with:
 - Each row representing one research paper
@@ -155,52 +130,17 @@ Results are saved in CSV format with:
 - Answers and source citations separated by newlines within cells
 - Failed extractions marked with descriptive error messages
 
-## 🛠️ Technical Details
 
-### PDF Processing
-- Uses the `marker` library for high-quality PDF to Markdown conversion
-- Supports OCR for scanned documents
-- Handles mathematical formulas and complex layouts
-- GPU acceleration for faster processing
+## Important Notes
 
-### LLM Integration
-- Combines all questions into a single API call for efficiency
-- Uses structured prompts for consistent responses
-- Implements flexible regex parsing for various response formats
-- Handles different capitalization and formatting variations
-
-### Error Handling
-- Graceful handling of PDF conversion failures
-- API error recovery and reporting
-- Regex parsing fallbacks for malformed responses
-- Comprehensive logging and progress tracking
-
-## 🔧 Troubleshooting
-
-### Common Issues
-
-1. **PDF Conversion Fails**
-   - Ensure sufficient system memory
-   - Try forcing CPU mode with `--no-gpu`
-   - Check if PDF is corrupted or password-protected
-
-2. **API Errors**
-   - Verify API key is correct
-   - Check API rate limits and usage
-   - Ensure network connectivity
-
-3. **Parsing Errors**
-   - Check the generated Markdown files manually
-   - Review regex patterns in `query_engine.py`
-   - Enable verbose mode for detailed debugging
-
-### Performance Optimization
-
-- Use GPU acceleration for PDF processing when available
-- Adjust `--max-workers` based on your system and API limits
-- Process smaller batches if encountering memory issues
+- Prompt structure generated dynamically from YAML - format instructions are hardcoded in `query_engine.py`
+- Each worker in ProcessPoolExecutor creates its own OpenAI client
+- Raw LLM responses saved to `raw_responses/` for debugging with timestamps
+- Failed parses marked as `[Parse failed]`, failed queries as `[Query failed]`
+- Memory: Uses `gc.collect()` and GPU cache clearing between documents
+- Output files include timestamped versions and a `_latest.xlsx` copy
 
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - [marker-pdf](https://github.com/VikParuchuri/marker) for PDF processing

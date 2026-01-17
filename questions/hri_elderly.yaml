@@ -1,0 +1,189 @@
+survey:
+  name: "HRI Elderly Care"
+  description: "Human-Robot Interaction research papers focused on elderly care robotics"
+
+questions:
+  - id: involved_stakeholder
+    display_name: "Involved Stakeholder"
+    prompt: |
+      What are the involved stakeholders in the study? Stakeholders include primary subjects or interviewees. Use the title of the role explicitly mentioned in the text (e.g., care staff, elderly individuals).
+
+  - id: sample_size
+    display_name: "Sample Size"
+    prompt: |
+      What is the sample size of the study? For example, if 100 people participated and only 90 consented to data collection, the sample size is 90. For multi-study papers, specify the sample size for each study group.
+
+  - id: country
+    display_name: "Country"
+    prompt: |
+      What is the country or region of the participants as explicitly stated in the paper (do not infer from the authors' affiliations)?
+
+  - id: culture
+    display_name: "Culture"
+    prompt: |
+      Whether the study adapted or accommodated to the cultural backgrounds of participants (e.g., language adjustments, behavioral modifications, or interface changes), and whether the study analyzed or investigated the impact of cultural factors (e.g., values, norms, or social context) on HRI outcomes. If yes, please report. If no, please answer N/A
+
+  - id: age
+    display_name: "Age"
+    prompt: |
+      What age-related numerical information is provided in the study (e.g., age range like 65-80, mean age like 72, or median age like 70)? Exclude vague descriptions such as "older adults" or "elderly".
+
+  - id: gender
+    display_name: "Gender"
+    prompt: |
+      What gender-related information is reported in the study?
+
+  - id: demographic_background
+    display_name: "Demographic Background"
+    prompt: |
+      What demographic background information is reported? For example, socioeconomic status, educational level, living context for elderly people, or working context for caregivers. Include additional details such as language proficiency or professional background if mentioned. Exclude technology literacy. Use the exact terminology from the original text. Provide as comprehensive a response as possible, including all relevant information.
+
+  - id: technology_literacy
+    display_name: "Technology Literacy"
+    prompt: |
+      What information is provided about the technology literacy of stakeholders? This includes their experience interacting with robots, understanding of robots, acceptance of technology, or frequency of using technological products.
+
+  - id: cognitive_and_physical_impairment
+    display_name: "Cognitive and Physical Impairment"
+    prompt: |
+      What cognitive and physical impairments are described among the elderly participants? Separate cognitive impairments (e.g., memory issues, dementia) and physical impairments (e.g., mobility issues, arthritis) in the output. If standardized measurement tools were used, report the specific scores and scores of the scale; if qualitative terms (e.g., 'mild', 'severe') were used, report them accordingly. If no measurement tools or qualitative descriptions are used, do not extract information.
+
+  - id: needs_and_expectations
+    display_name: "Needs and Expectations"
+    prompt: |
+      What needs and expectations are EXPLICITLY stated by stakeholders (especially those who participant the experiment/interview/investigation) in this research? Needs should reflect problems or gaps in stakeholders' current situation, such as physical, emotional, social, or practical deficiencies; Expectations should reflect stakeholders' hopes or assumptions about how the robot will address their needs or enhance their experience. You must use the original words or phases in this paper to answer the question. In the output, please separate needs and expectations.
+
+  - id: application_context
+    display_name: "Application Context"
+    prompt: |
+      What is the envisioned future application context for the robot as mentioned in the paper? Check the introduction, discussion or conclusion sections that may describe potential future application scenarios, not the current testing scenarios.
+
+  - id: testing_context
+    display_name: "Testing Context"
+    prompt: |
+      What is the testing context of the study? (For example, was the test conducted in a lab, care home, hospital, private residence, or another setting?)
+
+  - id: process_of_the_care
+    display_name: "Process of the Care"
+    prompt: |
+      Report information provided about the duration and stage of the care process. Specify whether the study involved a first encounter, short-term use, or long-term deployment, and include session duration and frequency if available.
+
+  - id: methodology
+    display_name: "Methodology"
+    prompt: |
+      What research methodology was used in the study (e.g., qualitative interviews, quantitative surveys, randomized controlled trials)?
+
+  - id: robot_type
+    display_name: "Robot Type"
+    prompt: |
+      What type of robot is used in the study? (If the paper uses terms like 'human-like' or 'animal-like', use those directly; otherwise, provide a short description of the robot's appearance.)
+
+  - id: robot_name
+    display_name: "Robot Name"
+    prompt: |
+      What is the name of the robot used in the study?
+
+  - id: development_goal
+    display_name: "Development Goal"
+    prompt: |
+      Describe the paper's development goal, including but not limited to the following questions: Why do the authors develop/propose this robot/system/framework in this paper? What problems do they want to solve? What aspects/features of the robot/system/framework do they consider important? What functions do they want to improve?
+
+  - id: study_goal
+    display_name: "Study Goal"
+    prompt: |
+      What does the study aim to study? What research questions did the paper address? Please extract the explicit aims/RQs.
+
+  - id: design_goal
+    display_name: "Design Goal"
+    prompt: |
+      What design goals were set for the robot or its interaction functions in the current study? These are typically found in the aim, objective, experimental design, or discussion sections of the paper.
+
+  - id: robot_general_function
+    display_name: "Robot General Function"
+    prompt: |
+      What functionalities of the robot were demonstrated, deployed, or introduced to users during the experiment/interview/investigation? Note that it is the robot's functionality rather than the role it plays. For example, conversation, handling food, etc. Please use the original words or phases to answer this question.
+
+  - id: facilitating_functions
+    display_name: "Facilitating Functions"
+    prompt: |
+      What specific robot functions are reported to enhance user's usage or interaction experience according to participants' feedback or reaction in this experiment/interview/investigation? Please list several most relevant functions. Remember they should be FUNCTIONS, rather than the good character they display (like friendly, trustworthy, etc).
+
+  - id: inhibitory_functions
+    display_name: "Inhibitory Functions"
+    prompt: |
+      What specific robot functions are reported to hinder user's usage or interaction experience according to participants' feedback or reaction in this experiment/interview/investigation? Please list several most relevant functions. Remember they should be FUNCTIONS, rather than the bad character they display (like unfriendly, untrustworthy, etc).
+
+  - id: stakeholder_facilitating_characteristics
+    display_name: "Stakeholder Facilitating Characteristics"
+    prompt: |
+      What inherent characteristics of the stakeholders are associated with better robot use, acceptance, or trust? Provide a list of relevant information, focusing on user characteristics (e.g., personality traits, prior experience) rather than changes or behaviors post-robot interaction. This does not include the inclusion criteria for participants in the experimental design.
+
+  - id: stakeholder_inhibitory_characteristics
+    display_name: "Stakeholder Inhibitory Characteristics"
+    prompt: |
+      What inherent characteristics of the stakeholders are associated with reduced robot use, lower acceptance, or lower trust? Provide a list of relevant information, focusing on user characteristics (e.g., personality traits, prior experience) rather than changes or behaviors post-robot interaction. This does not include the exclusion criteria for participants in the experimental design.
+
+  - id: consideration
+    display_name: "Consideration"
+    prompt: |
+      Apart from the factors mentioned under facilitating functions and inhibitory functions, what other factors do users take into account when considering the use of a robot? This may include negative concerns and positive or neutral considerations, include privacy, safety, size/space, noise, maintenance, cost, reliability, learnability, social acceptability.
+
+  - id: engagement
+    display_name: "Engagement"
+    prompt: |
+      What evaluation of user engagement in the robot is reported in the study? This may include quantitative measurements (e.g., rating scales) or qualitative descriptions (e.g., 'high engagement', 'low engagement'). If there is no explicit evaluation of participants' engagement, please answer "N/A"
+
+  - id: acceptance
+    display_name: "Acceptance"
+    prompt: |
+      What evaluation of user acceptance in the robot is reported in the study? This may include quantitative measurements (e.g., rating scales) or qualitative descriptions (e.g., 'high acceptance', 'low acceptance'). If there is no explicit evaluation of participants' acceptance, please answer "N/A"
+
+  - id: robot_function_effectiveness
+    display_name: "Robot Function Effectiveness"
+    prompt: |
+      What evaluations of the performance and effectiveness of the robot's functions are reported in the study? What are the results of these evaluations? This may include quantitative metrics (e.g., accuracy) or qualitative assessments (e.g., 'high effectiveness', 'low effectiveness').
+
+  - id: user_satisfaction
+    display_name: "User Satisfaction"
+    prompt: |
+      What evaluations of user satisfaction with the robot are reported in the study? What are the results of these evaluations? User satisfaction refers to the subjective feelings of fulfillment a user experiences regarding the robot. This may include quantitative metrics (e.g., rating scales) or qualitative descriptions (e.g., 'high satisfaction', 'low satisfaction').
+
+  - id: user_curiosity
+    display_name: "User Curiosity"
+    prompt: |
+      What evaluations of the user's curiosity about robots are reported in the study? What are the results of these evaluations? This may include quantitative metrics (e.g., rating scales) or qualitative descriptions (e.g., 'high curiosity', 'low curiosity').
+
+  - id: user_trust_reliance
+    display_name: "User Trust Reliance"
+    prompt: |
+      What evaluations of the user's trust in robots are reported in the study? What are the results of these evaluations? This may include quantitative metrics (e.g., rating scales) or qualitative descriptions (e.g., 'high trust', 'low trust').
+
+  - id: user_understanding
+    display_name: "User Understanding"
+    prompt: |
+      What evaluations of the user's understanding of robots are reported in the study? What are the results of these evaluations? This may include quantitative metrics (e.g., rating scales) or qualitative descriptions (e.g., 'high level of understanding', 'low level of understanding').
+
+  - id: learning_curve_productivity
+    display_name: "Learning Curve Productivity"
+    prompt: |
+      What evaluations of how easily users learn to use robots are reported in the study? What are the results of these evaluations? This may include quantitative metrics (e.g., rating scales) or qualitative descriptions (e.g., 'hard', 'medium', 'easy').
+
+  - id: system_controllability
+    display_name: "System Controllability"
+    prompt: |
+      What evaluations of the robots' controllability and adaptiveness are reported in the study? What are the results of these evaluations? Controllability and interaction refer to whether the robot is context-aware, flexible, and tailored to meet the specific needs and preferences of users. This may include quantitative metrics (e.g., rating scales) or qualitative descriptions (e.g., 'high controllability and adaptiveness', 'low adaptiveness').
+
+  - id: other
+    display_name: "Other"
+    prompt: |
+      Extract evaluation metrics and their corresponding measures other than engagement, acceptance, robot_function_effectiveness, user_satisfaction, user_curiosity, trust, and user_understanding, such as enjoyment, comfortability, operation, ease of use, and emotional attachments. Provide the scale names and the reported measures/scores if present.
+
+  - id: key_findings
+    display_name: "Key Findings"
+    prompt: |
+      What are the key findings of the study, as typically summarized in the conclusion or discussion section?
+
+  - id: additional_info
+    display_name: "Additional Info"
+    prompt: |
+      What additional information is provided about the study, such as limitations or other relevant details?

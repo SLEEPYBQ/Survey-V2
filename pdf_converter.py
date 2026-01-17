@@ -8,28 +8,30 @@ from marker.models import create_model_dict
 from marker.output import text_from_rendered
 import torch
 
-# 全局锁，用于同步模型创建
+# Global lock for synchronizing model creation
 _model_lock = threading.Lock()
 
+
 def create_converter(config, thread_id=None):
-    """创建PDF转换器"""
+    """Create PDF converter"""
     with _model_lock:
         try:
             converter = PdfConverter(
                 artifact_dict=create_model_dict()
             )
-            
+
             if config.get('verbose', False):
-                print(f"    [线程{thread_id}] 创建转换器成功")
-            
+                print(f"    [Thread {thread_id}] Converter created successfully")
+
             return converter
-            
+
         except Exception as e:
-            print(f"    [线程{thread_id}] 创建转换器失败: {e}")
+            print(f"    [Thread {thread_id}] Failed to create converter: {e}")
             raise e
 
+
 def convert_single_pdf(pdf_path, output_folder, config, device='cpu'):
-    """转换单个PDF文件为Markdown"""
+    """Convert single PDF file to Markdown"""
     result = {
         'success': False,
         'output_path': None,
@@ -37,66 +39,66 @@ def convert_single_pdf(pdf_path, output_folder, config, device='cpu'):
         'text_length': 0,
         'filename': os.path.basename(pdf_path)
     }
-    
+
     converter = None
     start_time = time.time()
-    
+
     try:
         if config.get('verbose', False):
-            print(f"    使用设备: {device}")
-        
-        # 创建转换器
+            print(f"    Using device: {device}")
+
+        # Create converter
         converter = create_converter(config)
-        
-        # 内存清理
+
+        # Memory cleanup
         gc.collect()
         if device == 'cuda' and torch.cuda.is_available():
             torch.cuda.empty_cache()
         elif device == 'mps' and torch.backends.mps.is_available():
             if hasattr(torch.mps, 'empty_cache'):
                 torch.mps.empty_cache()
-        
-        # 转换PDF
+
+        # Convert PDF
         if config.get('verbose', False):
-            print(f"    开始转换PDF...")
-        
+            print(f"    Starting PDF conversion...")
+
         rendered = converter(pdf_path)
         markdown_text, metadata, images = text_from_rendered(rendered)
-        
-        # 生成输出文件名
+
+        # Generate output filename
         filename = os.path.basename(pdf_path)
         base_name = os.path.splitext(filename)[0]
         output_path = os.path.join(output_folder, f"{base_name}.md")
-        
-        # 保存Markdown文件
+
+        # Save Markdown file
         with open(output_path, 'w', encoding='utf-8') as f:
             f.write(markdown_text)
-        
+
         if config.get('verbose', False):
-            print(f"    ✅ Markdown保存成功")
+            print(f"    [OK] Markdown saved successfully")
             if images:
-                print(f"    📷 检测到 {len(images)} 个图片（已忽略）")
-        
+                print(f"    [Info] Detected {len(images)} images (ignored)")
+
         result['success'] = True
         result['output_path'] = output_path
         result['text_length'] = len(markdown_text)
         result['time_taken'] = time.time() - start_time
-        
+
     except Exception as e:
         result['error'] = str(e)
         result['time_taken'] = time.time() - start_time
         if config.get('verbose', False):
-            print(f"    ❌ 转换失败: {e}")
-    
+            print(f"    [Error] Conversion failed: {e}")
+
     finally:
-        # 强制清理资源
+        # Force cleanup resources
         if converter:
             del converter
-        
-        # 内存清理
+
+        # Memory cleanup
         for _ in range(2):
             gc.collect()
-        
+
         if device == 'cuda' and torch.cuda.is_available():
             torch.cuda.empty_cache()
             torch.cuda.synchronize()
@@ -105,75 +107,76 @@ def convert_single_pdf(pdf_path, output_folder, config, device='cpu'):
                 torch.mps.empty_cache()
             if hasattr(torch.mps, 'synchronize'):
                 torch.mps.synchronize()
-    
+
     return result
 
+
 def convert_pdfs_to_markdown(args, device):
-    """批量转换PDF文件为Markdown"""
-    
-    # 创建输出文件夹
+    """Batch convert PDF files to Markdown"""
+
+    # Create output folder
     os.makedirs(args.markdown_folder, exist_ok=True)
-    
-    # 查找所有PDF文件
+
+    # Find all PDF files
     pdf_files = glob.glob(os.path.join(args.input_folder, "*.pdf"))
     pdf_files.extend(glob.glob(os.path.join(args.input_folder, "*.PDF")))
-    
+
     if not pdf_files:
-        print(f"❌ 在 {args.input_folder} 文件夹中没有找到PDF文件")
+        print(f"[Error] No PDF files found in {args.input_folder}")
         return []
-    
-    print(f"📁 找到 {len(pdf_files)} 个PDF文件")
-    
+
+    print(f"[Info] Found {len(pdf_files)} PDF files")
+
     if args.dry_run:
-        print("🔍 试运行模式 - 将要处理的文件:")
+        print("[Info] Dry run mode - files to be processed:")
         for i, pdf_path in enumerate(pdf_files, 1):
             print(f"  {i}. {os.path.basename(pdf_path)}")
         return []
-    
-    # 准备配置
+
+    # Prepare configuration
     config = {
         'verbose': args.verbose,
         'format_lines': args.format_lines,
         'force_ocr': args.force_ocr,
     }
-    
-    print(f"📤 输出目录: {args.markdown_folder}")
+
+    print(f"[Info] Output directory: {args.markdown_folder}")
     print("-" * 50)
-    
-    # 转换统计
+
+    # Conversion statistics
     successful_conversions = []
     failed_conversions = []
     total_start_time = time.time()
-    
-    # 单线程处理PDF转换
+
+    # Single-threaded PDF conversion
     for i, pdf_path in enumerate(pdf_files, 1):
         filename = os.path.basename(pdf_path)
-        print(f"[{i}/{len(pdf_files)}] 🔄 转换中: {filename}")
-        
+        print(f"[{i}/{len(pdf_files)}] [Processing] Converting: {filename}")
+
         result = convert_single_pdf(pdf_path, args.markdown_folder, config, device)
-        
+
         if result['success']:
-            print(f"  ✅ 成功 ({result['time_taken']:.1f}s)")
+            print(f"  [OK] Success ({result['time_taken']:.1f}s)")
             if args.verbose:
-                print(f"     📄 文本: {result['text_length']} 字符")
+                print(f"     [Info] Text: {result['text_length']} characters")
             successful_conversions.append(result['output_path'])
         else:
-            print(f"  ❌ 失败: {result['error']}")
+            print(f"  [Error] Failed: {result['error']}")
             failed_conversions.append((filename, result['error']))
-    
-    # 输出总结
+
+    # Output summary
     total_time = time.time() - total_start_time
     print("\n" + "=" * 50)
-    print("📊 转换完成统计:")
-    print(f"✅ 成功转换: {len(successful_conversions)} 个文件")
-    print(f"❌ 转换失败: {len(failed_conversions)} 个文件") 
-    print(f"⏱️  总耗时: {total_time:.1f}秒")
+    print("[Stats] Conversion completed:")
+    print(f"[OK] Successfully converted: {len(successful_conversions)} files")
+    print(f"[Error] Failed: {len(failed_conversions)} files")
+    print(f"[Time] Total time: {total_time:.1f} seconds")
     if successful_conversions:
-        print(f"📈 平均速度: {total_time/len(pdf_files):.1f}秒/文件")
-    
+        print(f"[Info] Average speed: {total_time/len(pdf_files):.1f} seconds/file")
+
     if failed_conversions:
-        print(f"\n❌ 失败的文件详情:")
+        print(f"\n[Error] Failed file details:")
         for filename, error in failed_conversions:
-            print(f"  • {filename}: {error}")
-    
+            print(f"  - {filename}: {error}")
+
     return successful_conversions
