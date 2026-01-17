@@ -1,6 +1,6 @@
 # PaperQA
 
-An AI-powered research paper analysis pipeline that converts PDF research papers to Markdown format and automatically extracts structured information using Large Language Models (LLMs). Designed for systematic literature reviews and research paper surveys.
+PaperQA is an AI-powered research paper analysis pipeline that converts PDF research papers to Markdown format and automatically extracts structured information using Large Language Models (LLMs). Designed for systematic literature reviews and research paper surveys.
 
 ## Overview
 
@@ -251,6 +251,3 @@ Excel Results (results/)
 
 - [marker-pdf](https://github.com/VikParuchuri/marker) for high-quality PDF processing
 
-## License
-
-[Add your license information here]
