@@ -13,6 +13,46 @@ def _init_worker(config):
     set_config(config)
 
 
+# Marker embeds the true PDF page count as an HTML comment at the top of each markdown.
+PAGE_COUNT_RE = re.compile(r'<!--\s*PAGE_COUNT:\s*(\d+)\s*-->')
+
+
+def _is_reasoning_model(model):
+    """Reasoning-class models (GPT-5 / o-series) reject temperature != 1."""
+    m = (model or "").lower()
+    return m.startswith(("gpt-5", "o1", "o3", "o4"))
+
+
+def extract_page_count(markdown_content):
+    """Return (page_count or None, content with the PAGE_COUNT marker removed)."""
+    match = PAGE_COUNT_RE.search(markdown_content)
+    if not match:
+        return None, markdown_content
+    page_count = int(match.group(1))
+    cleaned = PAGE_COUNT_RE.sub('', markdown_content, count=1).lstrip('\n')
+    return page_count, cleaned
+
+
+def build_auto_exclude_results(config, page_count):
+    """Result dict for a paper auto-excluded by the page-count rule (no LLM call)."""
+    screening = config.screening
+    decision_id = screening['decision_id']
+    max_excluded = screening['min_pages'] - 1
+    results = {}
+    for question_id in config.question_ids:
+        if question_id == decision_id:
+            results[question_id] = (
+                f"Exclude\nSource: Auto-excluded - paper has {page_count} "
+                f"page(s) (<={max_excluded}); not sent to the LLM"
+            )
+        else:
+            results[question_id] = (
+                f"N/A\nSource: Skipped - paper auto-excluded "
+                f"({page_count} page(s), <={max_excluded})"
+            )
+    return results
+
+
 def create_combined_prompt(markdown_content):
     """Create combined prompt with all questions from loaded config"""
     config = get_config()
@@ -26,6 +66,15 @@ def create_combined_prompt(markdown_content):
 
     # Build list of question IDs for the reminder section
     question_ids_list = ", ".join(config.question_ids)
+
+    # Build a worked example from the ACTUAL configured questions (not a hardcoded
+    # domain), so the example IDs always match the questions being asked.
+    example_questions = config.questions[:2] if config.questions else []
+    example_block = "\n\n".join(
+        f"## {q.id}\nAnswer: [concise answer for {q.display_name}]\n"
+        f"Source: [exact quote from the paper supporting the answer]"
+        for q in example_questions
+    )
 
     prompt_template = f"""Please analyze the provided research paper and answer the following questions.
 
@@ -48,13 +97,7 @@ QUESTIONS:
 {questions_section}
 
 RESPONSE FORMAT EXAMPLE:
-## involved_stakeholder
-Answer: Elderly individuals, care staff
-Source: The study included ten elderly individuals and five care staff as interviewees
-
-## robot_function_effectiveness
-Answer: The robot achieved 85 percent accuracy in task completion
-Source: The study reported an accuracy of 85 percent for the robot's task performance
+{example_block}
 
 [Continue for all {len(config.questions)} questions using their exact question IDs]
 
@@ -91,32 +134,30 @@ def save_raw_response(doc_name, response_text, raw_response_dir='raw_responses')
     return filepath
 
 
-def query_document_with_combined_questions(markdown_path, client, model, verbose=False):
-    """Query single document with combined questions"""
+def query_document_with_combined_questions(markdown_content, client, model, doc_name, verbose=False):
+    """Query a single document (page marker already stripped) with combined questions"""
     try:
-        # Read Markdown file
-        with open(markdown_path, 'r', encoding='utf-8') as f:
-            markdown_content = f.read()
-
         # Create combined prompt
         combined_prompt = create_combined_prompt(markdown_content)
 
         if verbose:
             print(f"    Sending query request...")
 
-        # Send request to OpenAI
-        response = client.chat.completions.create(
-            model=model,
-            messages=[
-                {"role": "user", "content": combined_prompt}
-            ],
-            temperature=0.0
-        )
+        # GPT-5 / o-series reasoning models only accept the default temperature (1);
+        # passing temperature=0.0 returns an HTTP 400, so omit it for those models.
+        create_kwargs = {
+            "model": model,
+            "messages": [{"role": "user", "content": combined_prompt}],
+        }
+        if not _is_reasoning_model(model):
+            create_kwargs["temperature"] = 0.0
 
-        result_text = response.choices[0].message.content
+        response = client.chat.completions.create(**create_kwargs)
+
+        # content can legitimately be None (refusal / reasoning-budget truncation)
+        result_text = response.choices[0].message.content or ""
 
         # Save raw response
-        doc_name = os.path.basename(markdown_path)
         raw_response_path = save_raw_response(doc_name, result_text)
 
         if verbose:
@@ -157,8 +198,8 @@ def parse_combined_response(response_text):
             missing_questions.append(question_id)
             results[question_id] = "[Parse failed] - Unable to extract answer from response"
 
-    if missing_questions and len(missing_questions) < len(config.question_ids) - 5:
-        # If only partial failures, try fallback parsing method
+    if missing_questions:
+        # Try a lenient fallback parse for any question the strict regex missed
         for question_id in missing_questions:
             # Try variant format matching
             alt_patterns = [
@@ -195,22 +236,40 @@ def parse_combined_response(response_text):
 def query_documents_wrapper(args_tuple):
     """Wrapper function for parallel document querying"""
     markdown_path, api_key, api_base, model, verbose = args_tuple
+    doc_name = os.path.basename(markdown_path) if markdown_path else "Unknown document"
 
     try:
+        config = get_config()
+
+        # Read the markdown and split off the embedded page-count marker
+        with open(markdown_path, 'r', encoding='utf-8') as f:
+            markdown_content = f.read()
+        page_count, markdown_content = extract_page_count(markdown_content)
+
+        # Screening pre-check: auto-exclude short papers WITHOUT calling the LLM
+        screening = config.screening
+        if screening and page_count is not None and page_count < screening['min_pages']:
+            if verbose:
+                print(f"  [Screen] {doc_name}: {page_count} pages "
+                      f"<= {screening['min_pages'] - 1} -> auto-Exclude (no LLM call)")
+            return doc_name, True, build_auto_exclude_results(config, page_count), None
+
+        if screening and page_count is None:
+            print(f"  [Warning] {doc_name}: no PAGE_COUNT marker found; "
+                  f"page-count screening rule not applied")
+
         # Create OpenAI client
         client = OpenAI(
             api_key=api_key,
             base_url=api_base
         )
 
-        doc_name = os.path.basename(markdown_path)
-
         if verbose:
             print(f"  [Processing] Querying document: {doc_name}")
 
         # Query document
         success, response = query_document_with_combined_questions(
-            markdown_path, client, model, verbose
+            markdown_content, client, model, doc_name, verbose
         )
 
         if success:
@@ -232,7 +291,6 @@ def query_documents_wrapper(args_tuple):
             return doc_name, False, None, response
 
     except Exception as e:
-        doc_name = os.path.basename(markdown_path) if markdown_path else "Unknown document"
         return doc_name, False, None, str(e)
 
 

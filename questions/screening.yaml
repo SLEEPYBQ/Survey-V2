@@ -1,0 +1,57 @@
+survey:
+  name: "Paper Screening & Classification"
+  description: "Classify HRI papers into research categories and screen them for inclusion."
+
+  # Screening: papers with FEWER than `min_pages` pages (i.e. <= min_pages-1) are
+  # auto-excluded in code, WITHOUT calling the LLM. The true page count is read from
+  # the PDF during conversion (pypdfium2) and embedded in the markdown as a
+  # `<!-- PAGE_COUNT: N -->` marker, so this works even in `--mode query`.
+  screening:
+    min_pages: 5            # 4 pages or fewer  =>  auto-Exclude (no LLM call)
+    decision_id: inclusion_decision
+
+questions:
+  # ---- Task 1: classification (one or more categories) ----
+  - id: paper_category
+    display_name: "Paper Category"
+    prompt: |
+      Classify the paper into one or more of the following categories. A paper can
+      belong to more than one category. Output the name(s) of EVERY matching category
+      (e.g. "User study, System development").
+
+      1. User understanding. Papers mainly aimed at understanding users, such as their
+      needs, preferences, perceptions, attitudes, concerns, or expectations. Typical
+      methods include interview, questionnaire, focus group, diary study, or evaluation
+      based on images, videos, scenarios, or low-fidelity materials. These studies
+      usually do not mainly evaluate robot performance through real human-robot
+      interaction.
+
+      2. User study. Papers in which humans interact with a robot, robot prototype,
+      virtual robot, Wizard-of-Oz system, or interactive robot-like system, and users
+      then evaluate the robot's behavior, performance, usability, trust, acceptance,
+      experience, or interaction effect. The key point is that the paper evaluates an
+      interaction design or robot behavior through user interaction.
+
+      3. System development. Papers mainly focused on developing robotic systems,
+      technical methods, algorithms, frameworks, prototypes, interfaces, or
+      implementation pipelines. These papers are mainly technical and system-oriented,
+      even if they also include some user input or evaluation.
+
+  # ---- Task 2: inclusion screening ----
+  # The page-count rule below is ENFORCED IN CODE (papers with <= 4 pages never reach
+  # the LLM). The full rule text is kept here verbatim for fidelity; the operational
+  # note tells the model to judge only the paper-type part so it never excludes a
+  # full-length paper based on a wrong page estimate.
+  - id: inclusion_decision
+    display_name: "Inclusion Decision"
+    prompt: |
+      Decide whether the paper should be included using the following screening rules:
+      If the paper has 4 pages or fewer, mark it as "Exclude"; If the paper is explicitly
+      identified as any of the following, mark it as "Exclude": workshop paper /
+      late-breaking report / late-breaking result / extended abstract. Otherwise, mark it
+      as "Include".
+
+      Operational note: the page-count rule is verified automatically from the PDF, so for
+      THIS judgment focus only on whether the paper is explicitly one of the excluded
+      types above. Do not exclude based on your own estimate of the page count. Answer
+      exactly "Include" or "Exclude".

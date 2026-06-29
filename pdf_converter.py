@@ -6,10 +6,24 @@ import threading
 from marker.converters.pdf import PdfConverter
 from marker.models import create_model_dict
 from marker.output import text_from_rendered
+import pypdfium2 as pdfium
 import torch
 
 # Global lock for synchronizing model creation
 _model_lock = threading.Lock()
+
+
+def get_pdf_page_count(pdf_path):
+    """Read the true page count directly from the PDF (independent of markdown)."""
+    try:
+        pdf = pdfium.PdfDocument(pdf_path)
+        n = len(pdf)
+        pdf.close()
+        return n
+    except Exception as e:
+        print(f"    [Warning] Could not read page count for "
+              f"{os.path.basename(pdf_path)}: {e}")
+        return None
 
 
 def create_converter(config, thread_id=None):
@@ -30,33 +44,25 @@ def create_converter(config, thread_id=None):
             raise e
 
 
-def convert_single_pdf(pdf_path, output_folder, config, device='cpu'):
-    """Convert single PDF file to Markdown"""
+def convert_single_pdf(pdf_path, output_folder, config, converter, device='cpu'):
+    """Convert single PDF file to Markdown using a shared (reused) converter"""
     result = {
         'success': False,
         'output_path': None,
         'error': None,
         'text_length': 0,
+        'page_count': None,
         'filename': os.path.basename(pdf_path)
     }
 
-    converter = None
     start_time = time.time()
 
     try:
         if config.get('verbose', False):
             print(f"    Using device: {device}")
 
-        # Create converter
-        converter = create_converter(config)
-
-        # Memory cleanup
-        gc.collect()
-        if device == 'cuda' and torch.cuda.is_available():
-            torch.cuda.empty_cache()
-        elif device == 'mps' and torch.backends.mps.is_available():
-            if hasattr(torch.mps, 'empty_cache'):
-                torch.mps.empty_cache()
+        # Read the true page count from the PDF (for downstream screening)
+        page_count = get_pdf_page_count(pdf_path)
 
         # Convert PDF
         if config.get('verbose', False):
@@ -64,6 +70,10 @@ def convert_single_pdf(pdf_path, output_folder, config, device='cpu'):
 
         rendered = converter(pdf_path)
         markdown_text, metadata, images = text_from_rendered(rendered)
+
+        # Embed the page count so the query/screening stage can read it without the PDF
+        if page_count is not None:
+            markdown_text = f"<!-- PAGE_COUNT: {page_count} -->\n\n{markdown_text}"
 
         # Generate output filename
         filename = os.path.basename(pdf_path)
@@ -75,13 +85,14 @@ def convert_single_pdf(pdf_path, output_folder, config, device='cpu'):
             f.write(markdown_text)
 
         if config.get('verbose', False):
-            print(f"    [OK] Markdown saved successfully")
+            print(f"    [OK] Markdown saved successfully ({page_count} pages)")
             if images:
                 print(f"    [Info] Detected {len(images)} images (ignored)")
 
         result['success'] = True
         result['output_path'] = output_path
         result['text_length'] = len(markdown_text)
+        result['page_count'] = page_count
         result['time_taken'] = time.time() - start_time
 
     except Exception as e:
@@ -91,22 +102,14 @@ def convert_single_pdf(pdf_path, output_folder, config, device='cpu'):
             print(f"    [Error] Conversion failed: {e}")
 
     finally:
-        # Force cleanup resources
-        if converter:
-            del converter
-
-        # Memory cleanup
-        for _ in range(2):
-            gc.collect()
-
+        # Light per-PDF cleanup. The converter is SHARED across all PDFs, so it is
+        # NOT deleted here; only transient per-document tensors are released.
+        gc.collect()
         if device == 'cuda' and torch.cuda.is_available():
             torch.cuda.empty_cache()
-            torch.cuda.synchronize()
         elif device == 'mps' and torch.backends.mps.is_available():
             if hasattr(torch.mps, 'empty_cache'):
                 torch.mps.empty_cache()
-            if hasattr(torch.mps, 'synchronize'):
-                torch.mps.synchronize()
 
     return result
 
@@ -141,6 +144,12 @@ def convert_pdfs_to_markdown(args, device):
     }
 
     print(f"[Info] Output directory: {args.markdown_folder}")
+
+    # Build the marker model suite ONCE and reuse it for every PDF. Reloading it per
+    # file would reload several hundred MB of weights each iteration. (Single-threaded
+    # is intentional: marker models cannot be built in parallel on Apple MPS.)
+    print("[Info] Loading marker models (one-time)...")
+    converter = create_converter(config)
     print("-" * 50)
 
     # Conversion statistics
@@ -148,12 +157,12 @@ def convert_pdfs_to_markdown(args, device):
     failed_conversions = []
     total_start_time = time.time()
 
-    # Single-threaded PDF conversion
+    # Single-threaded PDF conversion (converter reused across all files)
     for i, pdf_path in enumerate(pdf_files, 1):
         filename = os.path.basename(pdf_path)
         print(f"[{i}/{len(pdf_files)}] [Processing] Converting: {filename}")
 
-        result = convert_single_pdf(pdf_path, args.markdown_folder, config, device)
+        result = convert_single_pdf(pdf_path, args.markdown_folder, config, converter, device)
 
         if result['success']:
             print(f"  [OK] Success ({result['time_taken']:.1f}s)")

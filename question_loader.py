@@ -25,6 +25,7 @@ class QuestionConfig:
     survey_name: str
     survey_description: str
     questions: list[Question] = field(default_factory=list)
+    screening: Optional[dict] = None
 
     def __post_init__(self):
         self._question_ids = [q.id for q in self.questions]
@@ -152,10 +153,27 @@ def load_questions(yaml_path: str | Path) -> QuestionConfig:
             prompt=prompt.strip()
         ))
 
+    # Optional screening configuration (page-count based auto-exclusion)
+    screening = survey.get('screening')
+    if screening is not None:
+        if not isinstance(screening, dict):
+            raise QuestionLoaderError("'survey.screening' must be a mapping")
+        min_pages = screening.get('min_pages')
+        decision_id = screening.get('decision_id')
+        if not isinstance(min_pages, int) or min_pages < 1:
+            raise QuestionLoaderError(
+                "screening.min_pages must be a positive integer"
+            )
+        if decision_id not in seen_ids:
+            raise QuestionLoaderError(
+                f"screening.decision_id '{decision_id}' does not match any question id"
+            )
+
     return QuestionConfig(
         survey_name=survey_name,
         survey_description=survey_description,
-        questions=questions
+        questions=questions,
+        screening=screening
     )
 
 

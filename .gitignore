@@ -43,8 +43,12 @@ Thumbs.db
 
 # Project specific
 *.log
+logs/
 .env
 .env.local
+
+# API key (NEVER commit) — read by run.sh
+.api_key
 
 # PDFs folder - ignore all files but keep the folder
 pdfs/*
