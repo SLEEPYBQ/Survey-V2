@@ -31,6 +31,9 @@ def parse_args():
                         help='Format text lines, improve math formula quality')
     parser.add_argument('--force-ocr', action='store_true',
                         help='Force OCR processing for entire document')
+    parser.add_argument('--force-convert', action='store_true',
+                        help='Re-convert PDFs even if their markdown already exists '
+                             '(default: skip already-converted files / resume)')
 
     # Question configuration
     parser.add_argument('--questions', '-q', default='questions/proactive.yaml',

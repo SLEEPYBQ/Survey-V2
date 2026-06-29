@@ -14,16 +14,18 @@ set -uo pipefail
 # ---------------------------- editable settings ----------------------------
 QUESTIONS="${QUESTIONS:-questions/screening.yaml}"   # which question config
 INPUT_FOLDER="${INPUT_FOLDER:-pdfs}"                  # source PDFs
-MARKDOWN_FOLDER="${MARKDOWN_FOLDER:-markdowns}"       # converted markdown
-OUTPUT_FOLDER="${OUTPUT_FOLDER:-results}"             # Excel output
+MARKDOWN_FOLDER="${MARKDOWN_FOLDER:-markdowns_hri}"   # converted markdown (dedicated)
+OUTPUT_FOLDER="${OUTPUT_FOLDER:-results_hri}"         # Excel output (dedicated)
 MODEL="${MODEL:-qwen3.7-plus}"                        # LLM model id
 MODE="${MODE:-all}"                                   # all | markdown | query
 MAX_WORKERS="${MAX_WORKERS:-4}"                       # parallel query workers
+FORCE_CONVERT="${FORCE_CONVERT:-0}"                   # 1 = re-convert even if .md exists
 CONDA_ENV="${CONDA_ENV:-survey}"                      # conda env name
 # ---------------------------------------------------------------------------
-# NOTE: in `all`/`query` mode the query step processes EVERY *.md in
-# MARKDOWN_FOLDER. If that folder already holds markdown from another topic,
-# point MARKDOWN_FOLDER/OUTPUT_FOLDER at a clean folder to avoid mixing.
+# Dedicated folders (markdowns_hri/, results_hri/) keep this screening run clean
+# and separate from the repo's existing markdowns/ + results/. The query step
+# processes EVERY *.md in MARKDOWN_FOLDER, so a dedicated folder avoids mixing.
+# Conversion auto-skips PDFs already converted (resume); set FORCE_CONVERT=1 to redo.
 
 # Always run from the directory this script lives in
 cd "$(dirname "$0")"
@@ -43,7 +45,10 @@ export OPENAI_API_KEY
 mkdir -p logs
 LOG="logs/run_$(date +%Y%m%d_%H%M%S).log"
 
-echo "[Info] env=$CONDA_ENV  model=$MODEL  mode=$MODE  workers=$MAX_WORKERS"
+FORCE_FLAG=""
+[[ "$FORCE_CONVERT" == "1" ]] && FORCE_FLAG="--force-convert"
+
+echo "[Info] env=$CONDA_ENV  model=$MODEL  mode=$MODE  workers=$MAX_WORKERS  force_convert=$FORCE_CONVERT"
 echo "[Info] questions=$QUESTIONS"
 echo "[Info] $INPUT_FOLDER -> $MARKDOWN_FOLDER -> $OUTPUT_FOLDER"
 echo "[Info] logging to $LOG"
@@ -53,7 +58,7 @@ echo "---------------------------------------------------------------"
 conda run --no-capture-output -n "$CONDA_ENV" python -u main.py \
   -q "$QUESTIONS" \
   -i "$INPUT_FOLDER" -m "$MARKDOWN_FOLDER" -o "$OUTPUT_FOLDER" \
-  --mode "$MODE" --model "$MODEL" --max-workers "$MAX_WORKERS" --verbose \
+  --mode "$MODE" --model "$MODEL" --max-workers "$MAX_WORKERS" --verbose $FORCE_FLAG \
   2>&1 | tee "$LOG"
 
 status="${PIPESTATUS[0]}"

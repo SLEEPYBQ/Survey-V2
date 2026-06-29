@@ -145,22 +145,44 @@ def convert_pdfs_to_markdown(args, device):
 
     print(f"[Info] Output directory: {args.markdown_folder}")
 
+    # Resume support: skip any PDF whose markdown already exists, so an interrupted
+    # batch can be restarted without re-converting everything (use --force-convert to
+    # redo). Already-converted files are still returned so 'all' mode queries them.
+    force = getattr(args, 'force_convert', False)
+    successful_conversions = []
+    pending = []
+    for pdf_path in pdf_files:
+        base_name = os.path.splitext(os.path.basename(pdf_path))[0]
+        out_md = os.path.join(args.markdown_folder, f"{base_name}.md")
+        if not force and os.path.exists(out_md):
+            successful_conversions.append(out_md)
+        else:
+            pending.append(pdf_path)
+
+    skipped = len(pdf_files) - len(pending)
+    if skipped:
+        print(f"[Info] Skipping {skipped} already-converted file(s) "
+              f"(use --force-convert to redo them)")
+
+    if not pending:
+        print("[Info] All PDFs already converted - nothing to do.")
+        return successful_conversions
+
     # Build the marker model suite ONCE and reuse it for every PDF. Reloading it per
     # file would reload several hundred MB of weights each iteration. (Single-threaded
     # is intentional: marker models cannot be built in parallel on Apple MPS.)
-    print("[Info] Loading marker models (one-time)...")
+    print(f"[Info] {len(pending)} file(s) to convert. Loading marker models (one-time)...")
     converter = create_converter(config)
     print("-" * 50)
 
     # Conversion statistics
-    successful_conversions = []
     failed_conversions = []
     total_start_time = time.time()
 
     # Single-threaded PDF conversion (converter reused across all files)
-    for i, pdf_path in enumerate(pdf_files, 1):
+    for i, pdf_path in enumerate(pending, 1):
         filename = os.path.basename(pdf_path)
-        print(f"[{i}/{len(pdf_files)}] [Processing] Converting: {filename}")
+        print(f"[{i}/{len(pending)}] [Processing] Converting: {filename}")
 
         result = convert_single_pdf(pdf_path, args.markdown_folder, config, converter, device)
 
@@ -177,11 +199,12 @@ def convert_pdfs_to_markdown(args, device):
     total_time = time.time() - total_start_time
     print("\n" + "=" * 50)
     print("[Stats] Conversion completed:")
-    print(f"[OK] Successfully converted: {len(successful_conversions)} files")
+    print(f"[OK] Converted this run: {len(pending) - len(failed_conversions)} files "
+          f"(+{skipped} skipped, already done)")
     print(f"[Error] Failed: {len(failed_conversions)} files")
     print(f"[Time] Total time: {total_time:.1f} seconds")
-    if successful_conversions:
-        print(f"[Info] Average speed: {total_time/len(pdf_files):.1f} seconds/file")
+    if pending:
+        print(f"[Info] Average speed: {total_time/len(pending):.1f} seconds/file")
 
     if failed_conversions:
         print(f"\n[Error] Failed file details:")

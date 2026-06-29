@@ -50,6 +50,11 @@ logs/
 # API key (NEVER commit) — read by run.sh
 .api_key
 
+# Generated artifacts (don't bloat the repo)
+raw_responses/
+markdowns_hri/
+results_hri/
+
 # PDFs folder - ignore all files but keep the folder
 pdfs/*
 !pdfs/.gitkeep
