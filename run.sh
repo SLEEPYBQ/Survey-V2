@@ -20,6 +20,8 @@ MODEL="${MODEL:-qwen3.7-plus}"                        # LLM model id
 MODE="${MODE:-all}"                                   # all | markdown | query
 MAX_WORKERS="${MAX_WORKERS:-4}"                       # parallel query workers
 FORCE_CONVERT="${FORCE_CONVERT:-0}"                   # 1 = re-convert even if .md exists
+RELOAD_EVERY="${RELOAD_EVERY:-50}"                    # recycle conversion worker every N PDFs (OS reclaims memory; 0=in-process)
+SKIP_TABLES="${SKIP_TABLES:-1}"                       # 1 = skip table model (text-only task; saves mem/time)
 CONDA_ENV="${CONDA_ENV:-survey}"                      # conda env name
 # ---------------------------------------------------------------------------
 # Dedicated folders (markdowns_hri/, results_hri/) keep this screening run clean
@@ -47,6 +49,8 @@ LOG="logs/run_$(date +%Y%m%d_%H%M%S).log"
 
 FORCE_FLAG=""
 [[ "$FORCE_CONVERT" == "1" ]] && FORCE_FLAG="--force-convert"
+TABLES_FLAG=""
+[[ "$SKIP_TABLES" == "1" ]] && TABLES_FLAG="--skip-tables"
 
 echo "[Info] env=$CONDA_ENV  model=$MODEL  mode=$MODE  workers=$MAX_WORKERS  force_convert=$FORCE_CONVERT"
 echo "[Info] questions=$QUESTIONS"
@@ -58,7 +62,8 @@ echo "---------------------------------------------------------------"
 conda run --no-capture-output -n "$CONDA_ENV" python -u main.py \
   -q "$QUESTIONS" \
   -i "$INPUT_FOLDER" -m "$MARKDOWN_FOLDER" -o "$OUTPUT_FOLDER" \
-  --mode "$MODE" --model "$MODEL" --max-workers "$MAX_WORKERS" --verbose $FORCE_FLAG \
+  --mode "$MODE" --model "$MODEL" --max-workers "$MAX_WORKERS" \
+  --reload-every "$RELOAD_EVERY" --verbose $FORCE_FLAG $TABLES_FLAG \
   2>&1 | tee "$LOG"
 
 status="${PIPESTATUS[0]}"

@@ -34,6 +34,14 @@ def parse_args():
     parser.add_argument('--force-convert', action='store_true',
                         help='Re-convert PDFs even if their markdown already exists '
                              '(default: skip already-converted files / resume)')
+    parser.add_argument('--reload-every', type=int, default=50,
+                        help='Recycle the conversion worker process every N PDFs so the '
+                             'OS reclaims memory on long batches (0 = run in-process, no '
+                             'recycling; default: 50)')
+    parser.add_argument('--skip-tables', action='store_true',
+                        help='Skip the table-recognition model (saves memory/time, '
+                             'avoids the MPS table-model CPU fallback). Tables become '
+                             'plain text - fine for text-only extraction')
 
     # Question configuration
     parser.add_argument('--questions', '-q', default='questions/proactive.yaml',
