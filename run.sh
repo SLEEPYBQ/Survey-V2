@@ -22,6 +22,7 @@ MAX_WORKERS="${MAX_WORKERS:-4}"                       # parallel query workers
 FORCE_CONVERT="${FORCE_CONVERT:-0}"                   # 1 = re-convert even if .md exists
 RELOAD_EVERY="${RELOAD_EVERY:-50}"                    # recycle conversion worker every N PDFs (OS reclaims memory; 0=in-process)
 SKIP_TABLES="${SKIP_TABLES:-1}"                       # 1 = skip table model (text-only task; saves mem/time)
+DEVICE="${DEVICE:-auto}"                              # auto | cuda | mps | cpu (auto: CUDA on server, MPS on Mac)
 CONDA_ENV="${CONDA_ENV:-survey}"                      # conda env name
 # ---------------------------------------------------------------------------
 # Dedicated folders (markdowns_hri/, results_hri/) keep this screening run clean
@@ -52,7 +53,7 @@ FORCE_FLAG=""
 TABLES_FLAG=""
 [[ "$SKIP_TABLES" == "1" ]] && TABLES_FLAG="--skip-tables"
 
-echo "[Info] env=$CONDA_ENV  model=$MODEL  mode=$MODE  workers=$MAX_WORKERS  force_convert=$FORCE_CONVERT"
+echo "[Info] env=$CONDA_ENV  model=$MODEL  mode=$MODE  device=$DEVICE  workers=$MAX_WORKERS  force_convert=$FORCE_CONVERT"
 echo "[Info] questions=$QUESTIONS"
 echo "[Info] $INPUT_FOLDER -> $MARKDOWN_FOLDER -> $OUTPUT_FOLDER"
 echo "[Info] logging to $LOG"
@@ -62,7 +63,7 @@ echo "---------------------------------------------------------------"
 conda run --no-capture-output -n "$CONDA_ENV" python -u main.py \
   -q "$QUESTIONS" \
   -i "$INPUT_FOLDER" -m "$MARKDOWN_FOLDER" -o "$OUTPUT_FOLDER" \
-  --mode "$MODE" --model "$MODEL" --max-workers "$MAX_WORKERS" \
+  --mode "$MODE" --model "$MODEL" --device "$DEVICE" --max-workers "$MAX_WORKERS" \
   --reload-every "$RELOAD_EVERY" --verbose $FORCE_FLAG $TABLES_FLAG \
   2>&1 | tee "$LOG"
 
