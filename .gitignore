@@ -54,6 +54,13 @@ logs/
 raw_responses/
 markdowns_hri/
 results_hri/
+.paperqa_runs/
+.playwright-cli/
+output/playwright/
+
+# Generated outputs in the default folders (keep curated examples already tracked)
+results/query_results_*.xlsx
+results/query_stats_*.json
 
 # PDFs folder - ignore all files but keep the folder
 pdfs/*

@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+**Frontend work:** Read `DESIGN.md` before changing `web_app.py`, visual tokens, layout, or interaction states.
+
 ## Project Overview
 
 Survey-PQE is an AI-powered research paper analysis pipeline that:
