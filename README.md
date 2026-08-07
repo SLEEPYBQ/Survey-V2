@@ -1,253 +1,192 @@
 # PaperQA
 
-PaperQA is an AI-powered research paper analysis pipeline that converts PDF research papers to Markdown format and automatically extracts structured information using Large Language Models (LLMs). Designed for systematic literature reviews and research paper surveys.
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-3776AB.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-2383E2.svg)](LICENSE)
 
-## Overview
+PaperQA turns a collection of research papers into a structured Excel workbook. It converts PDFs to Markdown, asks an OpenAI-compatible language model a reusable set of questions, and keeps the answer and supporting source text side by side for review.
 
-PaperQA provides a complete workflow for analyzing research papers:
+> PaperQA accelerates evidence extraction; it does not replace researcher verification. Check generated answers and citations against the original paper before using them in a review.
 
-1. **PDF to Markdown Conversion**: Converts PDF research papers to clean Markdown format using the `marker` library with GPU acceleration support
-2. **AI-Powered Information Extraction**: Extracts structured data points from papers using LLM APIs (default: Deepseek-V3)
-3. **Batch Processing**: Processes multiple papers simultaneously with parallel processing
-4. **Structured Output**: Exports results to Excel format with answer and source citation rows
+## What it does
 
-## Features
+```text
+PDF papers ── marker-pdf ──> Markdown ── question schema + LLM ──> Excel
+                                                   └────────────> raw responses
+```
 
-- **PDF to Markdown Conversion**: High-quality conversion using marker library with GPU acceleration (CUDA/MPS/CPU support)
-- **AI-Powered Question Answering**: Extract structured information from papers using LLM API (default: Deepseek-V3)
-- **Batch Processing**: Process multiple papers simultaneously with parallel processing
-- **Flexible Execution Modes**: Choose between conversion-only, query-only, or full pipeline
-- **GPU Acceleration**: Support for CUDA, MPS (Apple Silicon), and CPU processing
-- **Structured Output**: Export results to Excel format with answer and source citations
-- **Customizable Questions**: Define extraction questions via YAML configuration files
-- **Domain Agnostic**: Easily adapt to different research domains by changing question configurations
+- Run the full workflow from a browser or the command line.
+- Process folders of papers and resume interrupted PDF conversion.
+- Use CUDA, Apple Silicon MPS, or CPU for local conversion.
+- Define domain-specific extraction schemas in readable YAML.
+- Send requests to OpenAI or another OpenAI-compatible endpoint.
+- Export two rows per paper: extracted answers and their reported sources.
+- Keep every Web UI run isolated in its own local workspace.
 
-## System Requirements
+## Quick start: Web UI
 
-- Python 3.11 or higher
-- Optional: CUDA-capable GPU or Apple Silicon for faster PDF processing
-- API key for LLM service (OpenAI-compatible API)
-
-## Installation
-
-### 1. Clone the Repository
+Python 3.11 or newer is recommended.
 
 ```bash
 git clone https://github.com/SLEEPYBQ/PaperQA.git
 cd PaperQA
+
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+
+streamlit run web_app.py
 ```
 
-### 2. Create Virtual Environment
+On Windows PowerShell, activate the environment with `.venv\Scripts\Activate.ps1`.
+
+The browser interface follows a document-first, Notion-inspired workspace design:
+
+1. **Add papers**: upload PDFs for the complete pipeline or Markdown to skip conversion.
+2. **Choose what to extract**: select a YAML question set and inspect its extraction fields.
+3. **Build the workbook**: confirm run readiness, follow conversion and extraction progress, preview the results, and download Excel.
+
+Provider credentials and advanced request settings stay in the sidebar. The primary action remains disabled until papers, a valid question set, and a model connection are ready. During a run, the interface streams CLI output and identifies the current pipeline stage instead of leaving the page in an indeterminate loading state.
+
+API keys entered in the interface are passed to the pipeline through the child process environment. They are not written to the run folder. Local runs are stored under `.paperqa_runs/`, which is ignored by Git.
+
+The interface tokens, responsive behavior, interaction states, and contribution guardrails are documented in [DESIGN.md](DESIGN.md).
+
+## Quick start: command line
+
+Set your credentials without putting secrets in shell history:
 
 ```bash
-conda create -n paperqa python=3.11
-conda activate paperqa
+export OPENAI_API_KEY="your-api-key"
 ```
 
-### 3. Install Dependencies
+Then choose one of the three modes:
 
 ```bash
-# Install PDF conversion library
-pip install marker-pdf
+# Convert PDFs and extract answers
+python main.py --mode all -q questions/default.yaml
 
-# Install other dependencies
-pip install openai pandas openpyxl tqdm pyyaml
+# Convert PDFs only; no API key or LLM call is needed
+python main.py --mode markdown -q questions/default.yaml
+
+# Query Markdown files that already exist
+python main.py --mode query -q questions/default.yaml
 ```
 
-## Quick Start
-
-### Basic Usage
+For a non-default provider or model, set both explicitly:
 
 ```bash
-# Full pipeline: Convert PDFs and extract information
-python main.py --api-key your_api_key
-
-# Convert PDFs to Markdown only
-python main.py --mode markdown
-
-# Query existing Markdown files only
-python main.py --mode query --api-key your_api_key
+python main.py --mode query \
+  --api-base https://api.openai.com/v1 \
+  --model gpt-4.1-mini \
+  -q questions/default.yaml
 ```
 
-### Specify Question Configuration
+Run `python main.py --help` for the complete option list.
 
-```bash
-# Use a specific question configuration file
-python main.py -q questions/hri_elderly.yaml --api-key your_api_key
-```
+## Write a question set
 
-## Usage Guide
-
-### Execution Modes
-
-- `markdown`: Convert PDFs to Markdown format only
-- `query`: Query existing Markdown files and extract information
-- `all`: Full pipeline (convert PDFs then query) - default mode
-
-### Advanced Options
-
-```bash
-# Specify custom directories
-python main.py -i ./papers -m ./converted -o ./analysis
-
-# Use specific GPU device
-python main.py --device cuda
-python main.py --device mps  # Apple Silicon
-
-# Force CPU processing
-python main.py --no-gpu
-
-# Increase parallel processing workers
-python main.py --max-workers 8
-
-# Enable verbose output
-python main.py --verbose
-
-# Dry run (preview files without processing)
-python main.py --dry-run
-```
-
-### Question Configuration
-
-Questions are defined in YAML files under the `questions/` directory. Each configuration file defines a set of questions to extract from research papers.
-
-#### Configuration File Structure
+Question sets live in `questions/*.yaml`. A minimal configuration looks like this:
 
 ```yaml
-# questions/hri_elderly.yaml
 survey:
-  name: "HRI Elderly Care"
-  description: "Human-Robot Interaction research papers"
+  name: "Study Characteristics"
+  description: "Basic properties of empirical research papers"
 
 questions:
-  - id: involved_stakeholder
-    display_name: "Involved Stakeholder"
-    prompt: |
-      What are the involved stakeholders in the study? 
-      Stakeholders include primary subjects or interviewees. 
-      Use the title of the role explicitly mentioned in the text 
-      (e.g., care staff, elderly individuals).
-  
   - id: sample_size
     display_name: "Sample Size"
     prompt: |
-      What is the sample size of the study? 
-      For example, if 100 people participated and only 90 
-      consented to data collection, the sample size is 90.
+      What is the final analyzed sample size? Report each study separately.
+      If the paper does not state it, answer N/A.
+
+  - id: study_method
+    display_name: "Study Method"
+    prompt: |
+      What research method did the authors use? Use the authors' own terminology.
 ```
 
-#### Key Properties
+Each question requires:
 
-- `id`: Internal identifier used in parsing and Excel column headers
-- `display_name`: Human-readable name for reports and output
-- `prompt`: Full question text sent to the LLM
+- `id`: a unique identifier containing letters, numbers, and underscores;
+- `display_name`: the label shown to people reviewing the schema;
+- `prompt`: the extraction instruction sent to the model.
 
-#### Creating a New Survey Configuration
+Run it with `python main.py -q questions/your_schema.yaml` or select it in the Web UI.
 
-1. Create a new YAML file in the `questions/` directory
-2. Define your survey metadata and questions
-3. Run with `-q questions/your_topic.yaml`
+## Inputs and outputs
 
-## Command Line Arguments
+The command-line defaults are:
 
-| Argument | Description | Default |
-|----------|-------------|---------|
-| `--input-folder`, `-i` | Input PDF folder path | `pdfs` |
-| `--markdown-folder`, `-m` | Markdown output folder path | `markdowns` |
-| `--output-folder`, `-o` | Results output folder path | `results` |
-| `--mode` | Execution mode: `markdown`, `query`, or `all` | `all` |
-| `--device` | Processing device: `auto`, `cpu`, `cuda`, `mps` | `mps` |
-| `--no-gpu` | Force CPU processing | `False` |
-| `--questions`, `-q` | Path to questions YAML config file | Auto-detect |
-| `--api-key` | LLM API key | Required for query mode |
-| `--api-base` | API base URL | `https://api.openai-proxy.org/v1` |
-| `--model` | Language model to use | `deepseek-chat` |
-| `--max-workers` | Maximum parallel processes for querying | `8` |
-| `--verbose`, `-v` | Enable verbose output | `False` |
-| `--dry-run` | Show files to process without executing | `False` |
-| `--format-lines` | Format text lines, improve math formula quality | `False` |
-| `--force-ocr` | Force OCR processing for entire document | `False` |
+| Path | Purpose |
+| --- | --- |
+| `pdfs/` | input PDF papers |
+| `markdowns/` | converted Markdown or direct Markdown inputs |
+| `results/` | timestamped Excel workbooks and extraction statistics |
+| `raw_responses/` | unparsed model responses for auditing and debugging |
 
-## Output Format
+The workbook contains `document` and `content_type` columns followed by one column per question. Every document produces an `answer` row and a `source` row. A timestamped workbook is retained alongside `query_results_latest.xlsx`.
 
-Results are exported to Excel (.xlsx) format with the following structure:
+Use custom paths when you want each project to remain separate:
 
-- **Two rows per document**: One row for answers, one row for source citations
-- **Columns**: `document`, `content_type`, followed by question IDs from the loaded configuration
-- **Answer format**: Concise answers extracted from the paper
-- **Source format**: Direct quotes or derived text from the original paper with specific references (e.g., "Figure 1", "Table 2")
-- **Error handling**: Failed extractions marked as `[Parse failed]` or `[Query failed]` with descriptive messages
-
-Output files include:
-- Timestamped versions: `query_results_YYYYMMDD_HHMMSS.xlsx`
-- Latest copy: `query_results_latest.xlsx`
-- Statistics file: `query_stats_YYYYMMDD_HHMMSS.json`
-
-## Architecture
-
-```
-PDFs (pdfs/)
-    | pdf_converter.py (marker + GPU)
-    v
-Markdowns (markdowns/)
-    | query_engine.py (LLM API, parallel)
-    v
-Raw Responses (raw_responses/)
-    | utils.py (parsing)
-    v
-Excel Results (results/)
+```bash
+python main.py \
+  -i ./my_review/pdfs \
+  -m ./my_review/markdowns \
+  -o ./my_review/results \
+  --raw-response-folder ./my_review/raw_responses \
+  -q questions/default.yaml
 ```
 
-### Key Components
+## Useful options
 
-- `main.py`: Entry point, orchestrates the pipeline
-- `config.py`: CLI argument parsing and device detection
-- `question_loader.py`: Loads questions from YAML configuration files
-- `pdf_converter.py`: PDF to Markdown conversion via marker library
-- `query_engine.py`: LLM prompting (dynamic), response parsing
-- `utils.py`: Excel export and statistics generation
+| Option | Purpose |
+| --- | --- |
+| `--device auto` | choose CUDA, MPS, or CPU automatically |
+| `--no-gpu` | force CPU conversion |
+| `--max-workers 4` | limit concurrent model requests |
+| `--skip-tables` | skip table recognition to reduce conversion memory |
+| `--force-ocr` | OCR the full document |
+| `--force-convert` | rebuild Markdown that already exists |
+| `--reload-every 50` | recycle the conversion worker to bound memory use |
+| `--dry-run` | list PDFs without converting them |
+| `--verbose` | print detailed progress and paths |
 
-## Technical Details
+`run.sh` is an opinionated batch example for the included screening workflow. Most new users should start with the Web UI or `main.py` directly.
 
-### PDF Conversion
+## Project structure
 
-- Uses `marker.converters.pdf.PdfConverter` with `create_model_dict()`
-- Thread-safe via global `_model_lock`
-- Supports CUDA/MPS/CPU with automatic fallback
-- Sequential processing for PDF conversion
+```text
+PaperQA/
+├── web_app.py           # Streamlit browser interface
+├── .streamlit/          # native control theme
+├── DESIGN.md            # UI tokens, interaction states, and design guardrails
+├── main.py              # command-line orchestration
+├── config.py            # command-line arguments and device selection
+├── pdf_converter.py     # marker-pdf conversion
+├── query_engine.py      # prompt, model request, and response parsing
+├── question_loader.py   # YAML schema loading and validation
+├── utils.py             # workbook and statistics export
+├── questions/           # reusable extraction schemas
+└── requirements.txt     # installable dependencies
+```
 
-### Query Pipeline
+The CLI is the shared interface for both terminal and browser workflows. The Web UI calls that same interface, so it does not duplicate extraction behavior.
 
-- `create_combined_prompt()`: Builds prompt dynamically from loaded questions
-- `query_document_with_combined_questions()`: Calls OpenAI-compatible API (temperature=0.0, max_tokens=10000)
-- `parse_combined_response()`: Uses regex pattern matching to extract structured answers
-- ProcessPoolExecutor for parallel processing (default: 8 workers)
-- Each worker creates its own OpenAI client
+## Privacy and cost
 
-### Memory Management
+- Papers queried through a hosted model are sent to the endpoint configured by `--api-base`. Review that provider's data policy before processing confidential or unpublished work.
+- PDF-to-Markdown conversion runs locally. LLM extraction may incur provider charges.
+- Do not commit `.api_key`, `.env`, raw responses, private papers, or generated review workbooks.
+- Model output may contain unsupported claims, missing evidence, or malformed citations. Always verify important fields manually.
 
-- Uses `gc.collect()` and GPU cache clearing between documents
-- Automatic memory cleanup after each document
+## Contributing
 
-## Important Notes
+Issues and focused pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, scope, and lightweight validation guidance.
 
-- Prompt structure is generated dynamically from YAML configuration
-- Format instructions are hardcoded in `query_engine.py`
-- Raw LLM responses are saved to `raw_responses/` directory with timestamps for debugging
-- Failed parses are marked as `[Parse failed]`, failed queries as `[Query failed]`
-- The system automatically detects and uses available GPU resources (CUDA -> MPS -> CPU fallback)
+## License
 
-## Dependencies
-
-- `marker-pdf`: PDF to Markdown conversion (requires torch)
-- `openai`: LLM API client
-- `pandas`: Data manipulation
-- `openpyxl`: Excel file generation
-- `tqdm`: Progress bars
-- `pyyaml`: YAML configuration parsing
-- `torch`: Deep learning framework (for marker-pdf)
+PaperQA is released under the [MIT License](LICENSE).
 
 ## Acknowledgments
 
-- [marker-pdf](https://github.com/VikParuchuri/marker) for high-quality PDF processing
-
+PaperQA uses [marker](https://github.com/datalab-to/marker) for PDF conversion and the [OpenAI Python library](https://github.com/openai/openai-python) for OpenAI-compatible model requests.

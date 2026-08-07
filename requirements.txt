@@ -1,0 +1,12 @@
+# Core extraction pipeline
+openai>=1.40,<3
+pandas>=2.1,<3
+openpyxl>=3.1,<4
+PyYAML>=6,<7
+tqdm>=4.66,<5
+psutil>=5.9,<8
+pypdfium2>=4.30,<6
+
+# PDF conversion and local web interface
+marker-pdf>=1.2
+streamlit>=1.37,<2

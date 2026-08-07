@@ -1,0 +1,48 @@
+name: Bug report
+description: Report a reproducible problem in PaperQA
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping make PaperQA more reliable. Remove API keys and private paper content from logs.
+  - type: input
+    id: version
+    attributes:
+      label: PaperQA version
+      description: Commit hash or release tag.
+    validations:
+      required: true
+  - type: dropdown
+    id: stage
+    attributes:
+      label: Pipeline stage
+      options:
+        - Web interface
+        - PDF conversion
+        - LLM extraction
+        - Response parsing
+        - Excel export
+        - Installation
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Commands or actions that reproduce the problem. Do not paste credentials or copyrighted paper text.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Python version, device, model, and package versions relevant to the issue.
+    validations:
+      required: true
