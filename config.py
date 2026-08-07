@@ -14,6 +14,8 @@ def parse_args():
                         help='Markdown folder path (default: markdowns)')
     parser.add_argument('--output-folder', '-o', default='results',
                         help='Output results folder path (default: results)')
+    parser.add_argument('--raw-response-folder', default='raw_responses',
+                        help='Folder for raw LLM responses (default: raw_responses)')
 
     # Mode selection
     parser.add_argument('--mode', default='all', choices=['markdown', 'query', 'all'],

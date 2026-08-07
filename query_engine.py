@@ -134,7 +134,14 @@ def save_raw_response(doc_name, response_text, raw_response_dir='raw_responses')
     return filepath
 
 
-def query_document_with_combined_questions(markdown_content, client, model, doc_name, verbose=False):
+def query_document_with_combined_questions(
+    markdown_content,
+    client,
+    model,
+    doc_name,
+    verbose=False,
+    raw_response_dir='raw_responses',
+):
     """Query a single document (page marker already stripped) with combined questions"""
     try:
         # Create combined prompt
@@ -158,7 +165,7 @@ def query_document_with_combined_questions(markdown_content, client, model, doc_
         result_text = response.choices[0].message.content or ""
 
         # Save raw response
-        raw_response_path = save_raw_response(doc_name, result_text)
+        raw_response_path = save_raw_response(doc_name, result_text, raw_response_dir)
 
         if verbose:
             print(f"    [OK] Query successful")
@@ -235,7 +242,7 @@ def parse_combined_response(response_text):
 
 def query_documents_wrapper(args_tuple):
     """Wrapper function for parallel document querying"""
-    markdown_path, api_key, api_base, model, verbose = args_tuple
+    markdown_path, api_key, api_base, model, verbose, raw_response_dir = args_tuple
     doc_name = os.path.basename(markdown_path) if markdown_path else "Unknown document"
 
     try:
@@ -269,7 +276,12 @@ def query_documents_wrapper(args_tuple):
 
         # Query document
         success, response = query_document_with_combined_questions(
-            markdown_content, client, model, doc_name, verbose
+            markdown_content,
+            client,
+            model,
+            doc_name,
+            verbose,
+            raw_response_dir,
         )
 
         if success:
@@ -314,12 +326,19 @@ def query_all_documents(args):
         return
 
     # Create raw response directory
-    os.makedirs('raw_responses', exist_ok=True)
-    print(f"[Info] Raw responses will be saved to: raw_responses/")
+    os.makedirs(args.raw_response_folder, exist_ok=True)
+    print(f"[Info] Raw responses will be saved to: {args.raw_response_folder}/")
 
     # Prepare query arguments
     query_args = [
-        (md_path, api_key, args.api_base, args.model, args.verbose)
+        (
+            md_path,
+            api_key,
+            args.api_base,
+            args.model,
+            args.verbose,
+            args.raw_response_folder,
+        )
         for md_path in markdown_files
     ]
 
